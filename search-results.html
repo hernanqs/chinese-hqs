@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Hanzi</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+	<header class="header">
+		<nav class="navbar">
+			<form action="" class="search-form" id="search-form">
+				<input type="text" name="search-text" class="search-text" id="search-text">
+				<input type="submit" class="submit-btn" id="submit-btn" value="Search">
+			</form>
+		</nav>
+	</header>
+
+	<section class="main-section">
+		<ul class="results-ul" id="results-ul">
+			
+		</ul>
+
+
+
+		<table class="results-table" id="results-table">
+
+			<thead class="results-table-head" id="results-table-head">
+				<tr class="results-table-tr results-table-thead-tr">
+					<th class="results-table-th">Simplified</th>
+					<th class="results-table-th">Traditional</th>
+					<th class="results-table-th">Pinyin</th>
+					<th class="results-table-th">Other Pinyin</th>
+					<th class="results-table-th">Ranking</th>
+					<th class="results-table-th">HSK Level</th>
+					<th class="results-table-th">Radical</th>
+					<th class="results-table-th">Strokes</th>
+					<th class="results-table-th">Meaning</th>
+				</tr>
+			</thead>
+
+			<tbody class="results-table-body" id="results-table-body">
+				
+	<!-- 			<tr class="results-table-tr">
+					<td class="results-table-td"></th>
+					<td class="results-table-td"></th>
+					<td class="results-table-td"></th>
+					<td class="results-table-td"></th>
+					<td class="results-table-td"></th>
+					<td class="results-table-td"></th>
+					<td class="results-table-td"></th>
+					<td class="results-table-td"></th>
+				</tr>
+	 -->			
+
+			</tbody>
+		</table>
+
+
+		<table class="cedict-table" id="cedict-table">
+			<tbody class="cedict-table-body" id="cedict-table-body">
+				
+			</tbody>
+		</table>
+
+
+
+	</section>
+
+
+	<!-- Load data -->
+	<script src="data/hanzi.js"></script>
+
+	<script src="data/cedict.js"></script>
+
+
+	<!-- Load indices -->
+	<script src="indices/hanziIndex.js"></script>
+	<script src="indices/pinyinIndex.js"></script>
+	<script src="indices/pinyinWODIndex.js"></script>
+
+	<script src="indices/cedictWordIndex.js"></script>
+	<script src="indices/cedictPinyinIndex.js"></script>
+	<script src="indices/cedictPinyinWODIndex.js"></script>
+
+	<!-- Load scripts -->
+	<script src="js/helper-functions.js"></script>
+	<script src="js/main.js"></script>
+	<script src="js/search-results.js"></script>
+
+
+</body>
+</html>

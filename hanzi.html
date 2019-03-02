@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Hanzi</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+	<header class="header">
+		<nav class="navbar">
+			<form action="" class="search-form" id="search-form">
+				<input type="text" name="search-text" class="search-text" id="search-text">
+				<input type="submit" class="submit-btn" id="submit-btn" value="Search">
+			</form>
+		</nav>
+	</header>
+	<section class="hanzi-section">
+		<div class="simp-div">
+			<p class="simp" id="simp"></p>
+			<a href="" target="_blank" id="simp-w-link">Wiktionary</a>
+		</div>
+		<div class="hanzi-data">
+			<dl class="hanzi-data-dl">
+
+				<dt class="hanzi-data-dt">
+					Traditional
+				</dt>
+				<dd class="hanzi-data-dd" id="trad"></dd>
+
+				<dt class="hanzi-data-dt">
+					Pinyin
+				</dt>
+				<dd class="hanzi-data-dd" id="pinyin"></dd>
+
+				<dt class="hanzi-data-dt">
+					Other pinyin
+				</dt>
+				<dd class="hanzi-data-dd" id="other-pinyin"></dd>
+
+				<dt class="hanzi-data-dt">
+					Radical
+				</dt>
+				<dd class="hanzi-data-dd" id="radical"></dd>
+
+				<dt class="hanzi-data-dt">
+					Ranking in most common hanzi
+				</dt>
+				<dd class="hanzi-data-dd" id="most-common-ranking"></dd>
+
+				<dt class="hanzi-data-dt">
+					HKS level
+				</dt>
+				<dd class="hanzi-data-dd" id="hks-level"></dd>
+
+				<dt class="hanzi-data-dt">
+					Meaning
+				</dt>
+				<dd class="hanzi-data-dd" id="meaning"></dd>
+			</dl>
+		</div>
+		<div class="stroke-order-div" id="stroke-order-div">
+			<img src="" alt="" class="stroke-order-img" id="stroke-order-img">
+		</div>
+
+		<table class="cedict-table" id="cedict-table">
+			<tbody class="cedict-table-body" id="cedict-table-body">
+				
+			</tbody>
+		</table>
+
+	</section>
+
+
+
+	<!-- Load data -->
+	<script src="data/hanzi.js"></script>
+	<script src="data/cedict.js"></script>
+
+	<!-- Load indices -->
+	<script src="indices/cedictWordIndex.js"></script>
+
+	<!-- Load scripts -->
+	<script src="js/main.js"></script>
+	<script src="js/hanzi-page.js"></script>
+
+
+</body>
+</html>
