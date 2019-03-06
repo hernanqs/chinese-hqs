@@ -1,5 +1,14 @@
-function loadResultsPage(hanziResults, cedictResults) {
+function loadResultsPage(searchWord) {
 	// console.log(hanziResults, cedictResults);
+	console.log(searchWord);
+	searchWord = searchWord.toLowerCase().replace(/\s/g, '');
+	console.log(searchWord);
+
+	hanziResults = getHanziSearchResults(searchWord);
+	cedictResults = getCedictSearchResults(searchWord);
+
+	console.log(cedictResults);
+
 
 	mainSection = document.getElementById('main-section');
 
