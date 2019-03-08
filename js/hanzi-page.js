@@ -1,7 +1,3 @@
-// hanzi = decodeURIComponent(getURLParams().hanzi);
-
-// loadHanziPage(hanzi);
-
 function loadHanziPage(hanzi) {
 
 	mainSection = document.getElementById('main-section');
@@ -72,51 +68,31 @@ function loadHanziPage(hanzi) {
 		populateHTMLById(hanziMap);
 	}
 
+	// Add stroke order image
 	strokeOrderImg = document.getElementById('stroke-order-img');
 	strokeOrderImg.setAttribute('src', 'data/stroke-orders/' + hanzi + '-bw.png');
 	strokeOrderImg.setAttribute('alt', 'Stroke order for ' + hanzi);
 
+	// If the image does not exist, add link for searching the image in Google Images
 	strokeOrderDiv = document.getElementById('stroke-order-div');
 
 	let img = new Image();
 	img.src = 'data/stroke-orders/' + hanzi + '-bw.png';
 	img.onerror = function() {
-		// console.log(false);
 		strokeOrderDiv.innerHTML = '<a href="' +
 			'http://www.google.com/search?q=' + hanzi + ' stroke order&tbm=isch' +
 			'" target="_blank" id="search-stroke-order-link">Search the stroke order on Google Images</a>';
-		// console.log(strokeOrderDiv.innerhtml);
 	}
 
-
+	// Add link to Wiktionary entry on the hanzi
 	simpWiktionaryLink = document.getElementById('simp-w-link');
 	simpWiktionaryLink.setAttribute('href', 'https://en.wiktionary.org/wiki/' + hanzi);
 
 
-	// Fill Cedict table
-
-	cedictTable = `
-		<table class="cedict-table" id="cedict-table">
-			<caption class="cedict-table-caption" id="cedict-table-caption">
-				Cedict entries in which the hanzi appears
-			</caption>
-			<thead class="cedict-table-head" id="cedict-table-head">
-				<tr class="cedict-table-tr cedict-table-thead-tr">
-					<th class="cedict-table-th">Simplified</th>
-					<th class="cedict-table-th">Traditional</th>
-					<th class="cedict-table-th">Pinyin</th>
-					<th class="cedict-table-th">Meaning</th>
-				</tr>
-			</thead>
-			<tbody class="cedict-table-body" id="cedict-table-body">
-			</tbody>
-		</table>
-		`;
-
-	mainSection.innerHTML += cedictTable;
-
-
-	cedictTableBody = document.getElementById('cedict-table-body');
-	fillCedictTable(cedictTableBody, cedictWordIndex[hanzi])
+	// Add table whith Cedict entries where the hanzi appears
+	mainSection.innerHTML += makeCedictTable(
+		getCedictTableContent(cedictWordIndex[hanzi]),
+		'Cedict entries where the hanzi appears'
+		);
 	
 }

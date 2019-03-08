@@ -1,6 +1,5 @@
 function populateHTMLById(idContentMap) {
-	for (let entry of Object.entries(idContentMap)) {
-		let [id, content] = entry;
+	for (let [id, content] of Object.entries(idContentMap)) {
 		if (content) {
 			document.getElementById(id).innerHTML = content;
 		} else {
@@ -30,93 +29,136 @@ function getHanziIdContentMap(hanzi, hanziDict) {
 }
 
 
+// Functions for making tables
 
-// Fill hanzi Table function
-function fillHanziTable(tableBody, hanziArray) {
+function makeTableFunctionFactory(name, colNames) {
+	return function(content, caption) {
+		let cols = '';
+		for (let colName of colNames) {
+			cols += `<th class="${name}-th">${colName}</th>`;
+		}
+
+		table = `
+			<table class="${name}" id="${name}">
+				<caption class="${name}-caption" id="${name}-caption">
+					${caption}		
+				</caption>
+				<thead class="${name}-head" id="${name}-head">
+					<tr class="${name}-tr ${name}-thead-tr">
+						${cols}
+					</tr>
+				</thead>
+				<tbody class="${name}-body" id="${name}-body">
+					${content}
+				</tbody>
+			</table>
+		`;
+
+		return table;
+	}
+}
+
+let makeHanziTable = makeTableFunctionFactory('hanzi-table', [
+		'Simplified',
+		'Traditional',
+		'Pinyin',
+		'Other Pinyin',
+		'Ranking',
+		'HSK Level',
+		'Radical',
+		'Strokes',
+		'Meaning',
+	]);
+
+let makeCedictTable = makeTableFunctionFactory('cedict-table', [
+		'Simplified',
+		'Traditional',
+		'Pinyin',
+		'Meaning',
+	]);
+
+
+function getTableTr(tdContents, tableName) {
+	let newTrInnerHTML = '<tr>';
+
+	for (let tdContent of tdContents) {
+		if (tdContent) {
+			if (Array.isArray(tdContent)) {
+				newTrInnerHTML += `<td class="${tableName}-td">${tdContent.join(', ')}</td>`;
+			} else {
+				newTrInnerHTML += `<td class="${tableName}-td">${tdContent}</td>`;
+			}
+		} else {
+			newTrInnerHTML += `<td class="${tableName}-td"> -- </td>`
+		}
+	}
+
+	newTrInnerHTML += '</tr>';
+	return newTrInnerHTML;
+
+}
+
+
+// Get rows for hanzi Table function
+function getHanziTableContent(hanziArray) {
+	let tableContent = '';
+
 	for (let hanzi of hanziArray) {
 		hanzi = hanziDict[hanzi];
-		var newTr = document.createElement('tr');
-		tdContents = [
+
+		let tdContents = [
 			getWiktionaryLink(hanzi['simplified'], 'w', true) + ' ' + getHanziLink(hanzi['simplified']),
 			hanzi['traditional']? hanzi['traditional'].map(h =>getWiktionaryLink(h) + ' ' + h) : '--',
 			hanzi['pinyin'],
 			hanzi['otherPinyin'],
 			hanzi['mostCommonRanking'],
 			hanzi['HKSLevel'],
-			// hanzi['radicalAndExtraStrokes'],
 			getHanziLink(hanzi['radical']) + ' ' + hanzi['radicalAndExtraStrokes'].slice(1),
 			hanzi['strokeNumber'],
 			hanzi['meaning']
 		]
 
-		newTrInnerHTML = ''
+		tableContent += getTableTr(tdContents, 'hanzi-table');
 
-		for (let tdContent of tdContents) {
-			if (tdContent) {
-				if (Array.isArray(tdContent)) {
-					newTrInnerHTML += '<td class="hanzi-table-td">' + tdContent.join(', ') + '</td>';
-				} else {
-					newTrInnerHTML += '<td class="hanzi-table-td">' + tdContent + '</td>';
-				}
-			} else {
-				newTrInnerHTML += '<td class="hanzi-table-td">' + '--' + '</td>'
-			}
-		}
-
-		newTr.innerHTML = newTrInnerHTML;
-		tableBody.appendChild(newTr);
 	}
-
+	return tableContent;
 }
 
-function getCedictTableTr(hanzi) {
-	var newTr = document.createElement('tr');
-	tdContents = [
+
+// Functions for making the cedict table
+
+function getCedictTdContents(hanzi) {
+	return tdContents = [
 		hanzi['simplified'],
 		hanzi['traditional'],
 		hanzi['pinyin'],
 		hanzi['english']
-	]
-
-	newTrInnerHTML = ''
-
-	for (let tdContent of tdContents) {
-		if (tdContent) {
-			if (Array.isArray(tdContent)) {
-				newTrInnerHTML += '<td class="cedict-table-td">' + tdContent.join(', ') + '</td>';
-			} else {
-				newTrInnerHTML += '<td class="cedict-table-td">' + tdContent + '</td>';
-			}
-		} else {
-			newTrInnerHTML += '<td class="cedict-table-td">' + '--' + '</td>'
-		}
-	}
-
-	newTr.innerHTML = newTrInnerHTML;
-	return newTr;
+	];
 }
 
-// Fill hanzi Table function
-function fillCedictTable(tableBody, hanziArray) {
-	// console.log(hanziArray)
+function getCedictTableContent(hanziArray) {
+	let tableContent = '';
+
 	for (let hanzi of hanziArray) {
 		hanzi = cedict[hanzi];
-		// console.log(hanzi)
+
 		if (Array.isArray(hanzi)) {
+
 			for (let hanziItem of hanzi) {
-				newTr = getCedictTableTr(hanziItem);
-				tableBody.appendChild(newTr);
+				let newTr = getTableTr(getCedictTdContents(hanziItem), 'cedict-table');
+				tableContent += newTr;
 			}
+
 		} else {
-			newTr = getCedictTableTr(hanzi);
-			tableBody.appendChild(newTr);
+			let newTr = getTableTr(getCedictTdContents(hanzi), 'cedict-table');
+			tableContent += newTr;
 		}
 	}
-
+	return tableContent;
 }
 
 // Link functions
-function outerLinkFunctionFactory(baseURL, newTab=false, defaultText='') {
+function externalLinkFunctionFactory(baseURL, newTab=false, defaultText='') {
 	return function(URLParams, text='', id='', classes='') {
 		if (!text) {
 			text = URLParams;
@@ -126,10 +168,10 @@ function outerLinkFunctionFactory(baseURL, newTab=false, defaultText='') {
 	}
 }
 
-getWiktionaryLink = outerLinkFunctionFactory('https://en.wiktionary.org/wiki/', true, 'w');
-// getHanziLink = outerLinkFunctionFactory('hanzi.html?hanzi=', false)
+let getWiktionaryLink = externalLinkFunctionFactory('https://en.wiktionary.org/wiki/', true, 'w');
+// getHanziLink = externalLinkFunctionFactory('hanzi.html?hanzi=', false)
 
-function innerLinkFunctionFactory(baseURL, handler, defaultText='') {
+function internalLinkFunctionFactory(baseURL, handler, defaultText='') {
 	return function(path, text='', id='', classes='') {
 		if (!text) {
 			text = path;
@@ -139,42 +181,32 @@ function innerLinkFunctionFactory(baseURL, handler, defaultText='') {
 	}
 }
 
-getHanziLink = innerLinkFunctionFactory('hanzi/', 'handleHanziLink');
+let getHanziLink = internalLinkFunctionFactory('hanzi/', 'handleHanziLink');
 
 
+// Search results functions
+function getSearchResultsFunctionFactory(hanziIdx, pinyinIdx, pinyinWODIdx) {
+	return function (searchWord) {
+		let diacriticsRegExp = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i;
 
-function getHanziSearchResults(searchWord) {
-	diacriticsRegExp = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i;
+		let searchWordLower = searchWord.toLowerCase().replace(/\s/g, '');
 
-	searchResults = []
+		let searchResults = []
 
-	if (hanziIndex[searchWord]) {
-		searchResults = hanziIndex[searchWord];
+		if (hanziIdx[searchWord]) {
+			searchResults = hanziIdx[searchWord];
+		}
+		else if (diacriticsRegExp.test(searchWord) && pinyinIdx[searchWordLower]) {
+			searchResults = pinyinIdx[searchWordLower];
+		}
+		else if (pinyinWODIdx[searchWordLower]) {
+			searchResults = pinyinWODIdx[searchWordLower];
+		}
+
+		return searchResults;
 	}
-	else if (diacriticsRegExp.test(searchWord) && pinyinIndex[searchWord]) {
-		searchResults = pinyinIndex[searchWord];
-	}
-	else if (pinyinWODIndex[searchWord]) {
-		searchResults = pinyinWODIndex[searchWord];
-	}
 
-	return searchResults;
 }
 
-function getCedictSearchResults(searchWord) {
-	diacriticsRegExp = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i;
-
-	cedictSearchResults = []
-
-	if (cedictWordIndex[searchWord]) {
-		cedictSearchResults = cedictWordIndex[searchWord];
-	}
-	else if (diacriticsRegExp.test(searchWord) && cedictPinyinIndex[searchWord]) {
-		cedictSearchResults = cedictPinyinIndex[searchWord];
-	}
-	else if (cedictPinyinWODIndex[searchWord]) {
-		cedictSearchResults = cedictPinyinWODIndex[searchWord];
-	}
-
-	return cedictSearchResults;
-}
+let getHanziSearchResults = getSearchResultsFunctionFactory(hanziIndex, pinyinIndex, pinyinWODIndex);
+let getCedictSearchResults = getSearchResultsFunctionFactory(cedictWordIndex, cedictPinyinIndex, cedictPinyinWODIndex);
