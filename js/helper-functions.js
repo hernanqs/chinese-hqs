@@ -9,21 +9,22 @@ function populateHTMLById(idContentMap) {
 }
 
 function getHanziIdContentMap(hanzi, hanziDict) {
+	hanzi = hanziDict[hanzi];
 	let map = {
-		'simp': hanziDict[hanzi].simplified,
+		'simp': hanzi.simplified,
 		'trad': undefined,
-		'pinyin': hanziDict[hanzi].pinyin,
+		'pinyin': hanzi.pinyin,
 		'other-pinyin': undefined,
-		'radical': hanziDict[hanzi].radicalAndExtraStrokes,
-		'most-common-ranking': hanziDict[hanzi].mostCommonRanking,
-		'hks-level': hanziDict[hanzi].HKSLevel,
-		'meaning': hanziDict[hanzi].meaning,
+		'radical': getRadicalLink(hanzi.radical) + hanzi.radicalAndExtraStrokes.slice(1),
+		'most-common-ranking': hanzi.mostCommonRanking,
+		'hks-level': hanzi.HKSLevel,
+		'meaning': hanzi.meaning,
 	};
-	if (hanziDict[hanzi].taditional) {
-		map.trad = hanziDict[hanzi].taditional.join(', ');
+	if (hanzi.taditional) {
+		map.trad = hanzi.taditional.join(', ');
 	}
-	if (hanziDict[hanzi].otherPinyin) {
-		map['other-pinyin'] = hanziDict[hanzi].otherPinyin.join(', ');
+	if (hanzi.otherPinyin) {
+		map['other-pinyin'] = hanzi.otherPinyin.join(', ');
 	}
 	return map;
 }
@@ -113,7 +114,7 @@ function getHanziTableContent(hanziArray) {
 			hanzi['otherPinyin'],
 			hanzi['mostCommonRanking'],
 			hanzi['HKSLevel'],
-			getHanziLink(hanzi['radical']) + ' ' + hanzi['radicalAndExtraStrokes'].slice(1),
+			getRadicalLink(hanzi['radical']) + hanzi['radicalAndExtraStrokes'].slice(1),
 			hanzi['strokeNumber'],
 			hanzi['meaning']
 		]
@@ -158,30 +159,19 @@ function getCedictTableContent(hanziArray) {
 }
 
 // Link functions
-function externalLinkFunctionFactory(baseURL, newTab=false, defaultText='') {
-	return function(URLParams, text='', id='', classes='') {
-		if (!text) {
-			text = URLParams;
-		}
-		return '<a href="' + baseURL + URLParams + '" ' + (newTab? 'target="_blank"' : '') + ' id="' +
-			id + '" class="' + classes + '">' + (defaultText? defaultText : text) + '</a>'
-	}
-}
-
-let getWiktionaryLink = externalLinkFunctionFactory('https://en.wiktionary.org/wiki/', true, 'w');
-// getHanziLink = externalLinkFunctionFactory('hanzi.html?hanzi=', false)
-
-function internalLinkFunctionFactory(baseURL, handler, defaultText='') {
+function linkFunctionFactory(baseURL, newTab=false) {
 	return function(path, text='', id='', classes='') {
 		if (!text) {
 			text = path;
 		}
-		return '<button href="' + baseURL + path + '" onclick="' + handler + '(this);" id="' + 
-			id + '" class="' + classes + '">' + (defaultText? defaultText : text) + '</button>'
+		return `<a href="${ baseURL + path }" ${ (newTab? 'target="_blank"' : '') } id="${
+			id }" class="${ classes }">${ text }</a>`
 	}
 }
 
-let getHanziLink = internalLinkFunctionFactory('hanzi/', 'handleHanziLink');
+let getWiktionaryLink = linkFunctionFactory('https://en.wiktionary.org/wiki/', true);
+let getHanziLink = linkFunctionFactory('#hanzi/');
+let getRadicalLink = linkFunctionFactory('#radical/');
 
 
 // Search results functions

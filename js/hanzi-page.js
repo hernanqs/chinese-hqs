@@ -3,7 +3,7 @@ function loadHanziPage(hanzi) {
 	mainSection = document.getElementById('main-section');
 
 	// Clear main section content
-	mainSection.innerHTML = ''
+	mainSection.innerHTML = '';
 
 
 	// Fill hanzi section
