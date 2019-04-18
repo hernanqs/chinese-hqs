@@ -20,6 +20,12 @@ function hashRedirected() {
 hashRedirected();
 window.onhashchange = hashRedirected;
 
+
+// Navbar dropdowns
+let radicalsDropdownDiv = document.getElementById('radicals-dropdown-div');
+radicalsDropdownDiv.innerHTML += getRadicalsUl();
+
+
 // Search function
 
 // Get HTML search form elements
