@@ -45,7 +45,7 @@ function makeTableFunctionFactory(name, colNames) {
 					${caption}		
 				</caption>
 				<thead class="${name}-head" id="${name}-head">
-					<tr class="${name}-tr ${name}-thead-tr">
+					<tr class="${name}-thead-tr">
 						${cols}
 					</tr>
 				</thead>
@@ -80,7 +80,7 @@ let makeCedictTable = makeTableFunctionFactory('cedict-table', [
 
 
 function getTableTr(tdContents, tableName) {
-	let newTrInnerHTML = '<tr>';
+	let newTrInnerHTML = `<tr class="${tableName}-tr">`;
 
 	for (let tdContent of tdContents) {
 		if (tdContent) {
