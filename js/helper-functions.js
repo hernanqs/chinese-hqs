@@ -1,35 +1,3 @@
-function populateHTMLById(idContentMap) {
-	for (let [id, content] of Object.entries(idContentMap)) {
-		if (content) {
-			document.getElementById(id).innerHTML = content;
-		} else {
-			document.getElementById(id).innerHTML = '--';
-		}
-	}
-}
-
-function getHanziIdContentMap(hanzi, hanziDict) {
-	hanzi = hanziDict[hanzi];
-	let map = {
-		'simp': hanzi.simplified,
-		'trad': undefined,
-		'pinyin': hanzi.pinyin,
-		'other-pinyin': undefined,
-		'radical': getRadicalLink(hanzi.radical) + hanzi.radicalAndExtraStrokes.slice(1),
-		'most-common-ranking': hanzi.mostCommonRanking,
-		'hks-level': hanzi.HKSLevel,
-		'meaning': hanzi.meaning,
-	};
-	if (hanzi.taditional) {
-		map.trad = hanzi.taditional.join(', ');
-	}
-	if (hanzi.otherPinyin) {
-		map['other-pinyin'] = hanzi.otherPinyin.join(', ');
-	}
-	return map;
-}
-
-
 // Functions for making tables
 
 function makeTableFunctionFactory(name, colNames) {
@@ -39,7 +7,7 @@ function makeTableFunctionFactory(name, colNames) {
 			cols += `<th class="${name}-th">${colName}</th>`;
 		}
 
-		table = `
+		let table = `
 			<table class="${name}" id="${name}">
 				<caption class="${name}-caption" id="${name}-caption">
 					${caption}		
@@ -60,6 +28,7 @@ function makeTableFunctionFactory(name, colNames) {
 }
 
 let makeHanziTable = makeTableFunctionFactory('hanzi-table', [
+		'',
 		'Simplified',
 		'Traditional',
 		'Pinyin',
@@ -72,6 +41,7 @@ let makeHanziTable = makeTableFunctionFactory('hanzi-table', [
 	]);
 
 let makeCedictTable = makeTableFunctionFactory('cedict-table', [
+		'',
 		'Simplified',
 		'Traditional',
 		'Pinyin',
@@ -108,7 +78,8 @@ function getHanziTableContent(hanziArray) {
 		hanzi = hanziDict[hanzi];
 
 		let tdContents = [
-			getWiktionaryLink(hanzi['simplified'], 'w', true) + ' ' + getHanziLink(hanzi['simplified']),
+			getWiktionaryLink(hanzi['simplified'], 'w', true),
+			getHanziLink(hanzi['simplified']),
 			hanzi['traditional']? hanzi['traditional'].map(h =>getWiktionaryLink(h)) : '--',
 			hanzi['pinyin'],
 			hanzi['otherPinyin'],
@@ -129,8 +100,10 @@ function getHanziTableContent(hanziArray) {
 // Functions for making the cedict table
 
 function getCedictTdContents(hanzi) {
-	return tdContents = [
-		hanzi['simplified'],
+	return [
+		getWiktionaryLink(hanzi['simplified'], 'w') + ' ' +
+			getSearchLink(hanzi['simplified'], 's'),
+		getHanziLinksFromWord(hanzi['simplified']),
 		hanzi['traditional'],
 		hanzi['pinyin'],
 		hanzi['english']
@@ -164,14 +137,31 @@ function linkFunctionFactory(baseURL, newTab=false) {
 		if (!text) {
 			text = path;
 		}
-		return `<a href="${ baseURL + path }" ${ (newTab? 'target="_blank"' : '') } id="${
-			id }" class="${ classes }">${ text }</a>`
+		return `<a href="${ baseURL + path }" ${ (newTab? 'target="_blank"' : '') }
+			${ (id ? 'id="' + id + '"' : '') } ${ (classes ? 'class="' + classes + '"' : '') }
+			>${ text }</a>`;
 	}
 }
 
 let getWiktionaryLink = linkFunctionFactory('https://en.wiktionary.org/wiki/', true);
 let getHanziLink = linkFunctionFactory('#hanzi/');
 let getRadicalLink = linkFunctionFactory('#radical/');
+let getSearchLink = linkFunctionFactory('#search/');
+
+
+// Get hanzi links from word function
+function getHanziLinksFromWord(word) {
+	let result = '';
+	for (let char of word) {
+		// If character is a hanzi add link to result, else add character
+		if (!/[a-zA-Z0-9\s,，.:·]/.test(char)) {
+			result += getHanziLink(char);
+		} else {
+			result += char;
+		}
+	}
+	return result;
+}
 
 
 // Search results functions
@@ -249,4 +239,155 @@ function getRadicalsUl() {
 
 	return radicalsUl;
 
+}
+
+
+// Hanzi card function
+
+function getHanziCard(hanzi, hanziDict) {
+	hanzi = hanziDict[hanzi];
+
+	let hanziCard = `
+		<section class="hanzi-card">
+			<div class="hanzi-card-simp-div">
+				<p class="hanzi-card-simp" id="hanzi-card-simp">${ hanzi.simplified }</p>
+				${ getWiktionaryLink(hanzi.simplified, 'Wiktionary') }
+			</div>
+			<div class="hanzi-data">
+				<dl class="hanzi-data-dl">
+					${
+						hanzi.traditional ?
+							`<dt class="hanzi-data-dt">
+								Traditional
+							</dt>
+							<dd class="hanzi-data-dd" id="hanzi-data-trad">
+								${
+									hanzi.traditional.join(', ')
+								}
+							</dd>`
+							: ''
+					}
+					<dt class="hanzi-data-dt">
+						Pinyin
+					</dt>
+					<dd class="hanzi-data-dd" id="hanzi-data-pinyin">
+						${ hanzi.pinyin ? hanzi.pinyin : '--'}
+					</dd>
+					${
+						hanzi.otherPinyin ?
+							`<dt class="hanzi-data-dt">
+								Other pinyin
+							</dt>
+							<dd class="hanzi-data-dd" id="hanzi-data-other-pinyin">
+								${
+									hanzi.otherPinyin.join(', ')
+								}
+							</dd>`
+							: ''
+					}
+					<dt class="hanzi-data-dt">
+						Radical
+					</dt>
+					<dd class="hanzi-data-dd" id="hanzi-data-radical">
+						${
+							hanzi.radical ?
+							getRadicalLink(hanzi.radical) + hanzi.radicalAndExtraStrokes.slice(1) 
+							: '--'
+						}
+					</dd>
+					<dt class="hanzi-data-dt">
+						Ranking in most common hanzi
+					</dt>
+					<dd class="hanzi-data-dd" id="hanzi-data-most-common-ranking">
+						${ hanzi.mostCommonRanking ? hanzi.mostCommonRanking : '--' }
+					</dd>
+					<dt class="hanzi-data-dt">
+						HKS level
+					</dt>
+					<dd class="hanzi-data-dd" id="hanzi-data-hks-level">
+						${ hanzi.HKSLevel ? hanzi.HKSLevel : '--' }
+					</dd>
+					<dt class="hanzi-data-dt">
+						Meaning
+					</dt>
+					<dd class="hanzi-data-dd" id="hanzi-data-meaning">
+						${ hanzi.meaning ? hanzi.meaning : '--' }
+					</dd>
+				</dl>
+			</div>
+			<div class="stroke-order-div" id="stroke-order-div">
+			</div>
+		</section>
+	`;
+
+	return hanziCard;
+
+}
+
+
+// Cedict word card functions
+
+function getCedictWordCard(word, cedict) {
+	let cedictEntry = cedict[word];
+	let wordDataContent = '';
+
+	// If there is more than one definition for the word display all of them
+	if (Array.isArray(cedictEntry)) {
+		for (let i = 0; i < cedictEntry.length; i++) {
+			wordDataContent = `<div class="cedict-word-definition">${
+				getCedictWordDefinition(cedictEntry[i])
+			}</div>`;
+		}
+	} else {
+		wordDataContent = getCedictWordDefinition(cedictEntry);
+	}
+
+	let simplified = word;
+
+	let cedictWordCard = `
+		<section class="cedict-word-card">
+			<div class="cedict-word-card-simp-div">
+				<p class="cedict-word-card-simp" id="cedict-word-card-simp">${ simplified }</p>
+				${ getWiktionaryLink(simplified, 'Wiktionary') }
+			</div>
+			<div class="cedict-word-data">
+				${ wordDataContent }
+			</div>
+			<div class="stroke-order-div" id="stroke-order-div">
+			</div>
+		</section>
+	`;
+
+	return cedictWordCard;
+
+}
+
+function getCedictWordDefinition(cedictEntry) {
+	let definition = `
+			<dl class="cedict-word-data-dl">
+
+				<dt class="cedict-word-data-dt">
+					Traditional
+				</dt>
+				<dd class="cedict-word-data-dd" id="cedict-word-data-trad">
+					${
+						cedictEntry.traditional ? cedictEntry.traditional : '--'
+					}
+				</dd>
+				<dt class="cedict-word-data-dt">
+					Pinyin
+				</dt>
+				<dd class="cedict-word-data-dd" id="cedict-word-data-pinyin">
+					${ cedictEntry.pinyin ? cedictEntry.pinyin : '--'}
+				</dd>
+				<dt class="cedict-word-data-dt">
+					Meaning
+				</dt>
+				<dd class="cedict-word-data-dd" id="cedict-word-data-meaning">
+					${ cedictEntry.english ? cedictEntry.english : '--' }
+				</dd>
+			</dl>
+	`;
+
+	return definition;
 }

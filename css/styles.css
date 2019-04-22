@@ -132,10 +132,14 @@ p {
 	color: #000;
 	text-align: right;
 }
-.hanzi-table-td:nth-child(1),
+.cedict-table-td:nth-child(1) {
+	/*letter-spacing: 2px;*/
+	min-width: 35px;
+}
 .hanzi-table-td:nth-child(2),
-.cedict-table-td:nth-child(1),
-.cedict-table-td:nth-child(2) {
+.hanzi-table-td:nth-child(3),
+.cedict-table-td:nth-child(2),
+.cedict-table-td:nth-child(3) {
 	font-size: 24px;
 }
 .hanzi-table-th:last-child, .cedict-table-th:last-child {
@@ -161,15 +165,21 @@ p {
 }
 
 /*Hanzi page styles*/
-.hanzi-section {
+.hanzi-card, .cedict-word-card {
 	min-width: 400px;
 	max-width: 900px;
 
 	display: grid;
 	grid-template-columns: auto auto;
 	grid-template-rows: auto auto;
+
+	border: 1px solid #bbb;
+	box-shadow: 2px 3px 1px #bbb;
+	border-radius: 5px;
+	padding: 10px;
+	margin: 30px;
 }
-.simp-div {
+.hanzi-card-simp-div, .cedict-word-card-simp-div {
 	margin: 0;
 	padding: 10px 25px;
 
@@ -184,16 +194,19 @@ p {
 
 	color: #000;
 }
-.simp {
+.hanzi-card-simp, .cedict-word-card-simp {
 	font-size: 150px;
 	margin: 0;
 }
-.hanzi-data-dt {
+.hanzi-data-dt, .cedict-word-data-dt {
 	grid-column: 2 / 3;
 	grid-row: 2 / 3;
 
 	font-weight: bold;
 	color: #000;
+}
+#cedict-word-data-trad, #hanzi-data-trad {
+	font-size: 24px;
 }
 .stroke-order-div {
 	max-width: 800px;
@@ -206,4 +219,14 @@ p {
 }
 .stroke-order-img {
 	max-width: 600px;
+}
+
+.cedict-word-definition {
+	padding-bottom: 5px;
+	box-shadow: 0px 1px 0px #bbb;
+}
+
+.cedict-word-definition:last-child {
+	padding-bottom: 0;
+	box-shadow: none;
 }
