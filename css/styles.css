@@ -59,9 +59,9 @@ p {
 
 	vertical-align: center;
 }
+
 .navbar-dropdown-div .navbar-ul {
 	display: none;
-	min-width: 450px;
 	box-shadow: 0px 1px 1px #808080;
 	padding: 5px;
 
@@ -80,6 +80,13 @@ p {
 	right: 0;
 	z-index: 1;
 }
+#radicals-dropdown-div .navbar-ul{
+	min-width: 450px;
+}
+#hsk-levels-dropdown-div .navbar-ul{
+	min-width: 105px;
+}
+
 .search-form {
 	display: inline-block;
 

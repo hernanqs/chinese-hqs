@@ -86,7 +86,7 @@ function getHanziTableContent(hanziArray) {
 			hanzi['pinyin'],
 			hanzi['otherPinyin'],
 			hanzi['mostCommonRanking'],
-			hanzi['HKSLevel'],
+			hanzi['HSKLevel'],
 			getRadicalLink(hanzi['radical']) + hanzi['radicalAndExtraStrokes'].slice(1),
 			hanzi['strokeNumber'],
 			hanzi['meaning']
@@ -148,6 +148,7 @@ let getWiktionaryLink = linkFunctionFactory('https://en.wiktionary.org/wiki/', t
 let getHanziLink = linkFunctionFactory('#hanzi/');
 let getRadicalLink = linkFunctionFactory('#radical/');
 let getSearchLink = linkFunctionFactory('#search/');
+let getHSKLevelLink = linkFunctionFactory('#hsk/');
 
 
 // Get hanzi links from word function
@@ -225,10 +226,10 @@ function getHanziCard(hanzi, hanziDict) {
 						${ hanzi.mostCommonRanking || '--' }
 					</dd>
 					<dt class="hanzi-data-dt">
-						HKS level
+						HSK level
 					</dt>
-					<dd class="hanzi-data-dd" id="hanzi-data-hks-level">
-						${ hanzi.HKSLevel || '--' }
+					<dd class="hanzi-data-dd" id="hanzi-data-hsk-level">
+						${ hanzi.HSKLevel || '--' }
 					</dd>
 					<dt class="hanzi-data-dt">
 						Meaning
@@ -319,9 +320,9 @@ function getCedictWordDefinition(cedictEntry) {
 // Radical page functions
 
 function getRadicalsUl() {
-		let radicalsUl = '';
+	let radicalsUl = '';
 
-		let radicalsByStrokeCount = {
+	let radicalsByStrokeCount = {
 		1: ['一', '丨', '丶', '丿', '乙', '亅'],
 		2: ['二', '亠', '人', '儿', '入', '八', '冂', '冖', '冫', '几', '凵', '刀', '力',
 			'勹', '匕', '匚', '匸', '十', '卜', '卩', '厂', '厶', '又'],
@@ -368,3 +369,29 @@ function getRadicalsUl() {
 }
 
 
+// HSK Levels page functions
+
+function getHSKLevelsUl() {
+	let HSKLevelsUl = '';
+
+	let levelsURLToTextMap = {
+		'level-1': 'Level 1',
+		'level-2': 'Level 2',
+		'level-3': 'Level 3',
+		'level-4': 'Level 4',
+		'level-5': 'Level 5',
+		'level-6': 'Level 6',
+		'not-in-hsk': 'Not in HKS'
+	};
+
+	HSKLevelsUl += '<ul class="navbar-ul">';
+
+	for (let [url, text] of Object.entries(levelsURLToTextMap)) {
+		HSKLevelsUl += `<li>${ getHSKLevelLink(url, text) }</li>`;	
+	}
+
+	HSKLevelsUl += '</ul>';
+
+	return HSKLevelsUl;
+
+}

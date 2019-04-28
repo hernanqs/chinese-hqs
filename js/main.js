@@ -1,6 +1,7 @@
 function hashRedirected() {
 	// Map from type of page requested to the function to load the page
 	let pageTypeToLoadFunctionMap = {
+		'hsk': loadHSKPage,
 		'search': loadResultsPage,
 		'hanzi': loadHanziPage,
 		'radical': loadRadicalPage
@@ -30,6 +31,9 @@ window.onhashchange = hashRedirected;
 // Navbar dropdowns
 let radicalsDropdownDiv = document.getElementById('radicals-dropdown-div');
 radicalsDropdownDiv.innerHTML += getRadicalsUl();
+
+let HSKLevelsDropdownDiv = document.getElementById('hsk-levels-dropdown-div');
+HSKLevelsDropdownDiv.innerHTML += getHSKLevelsUl();
 
 
 // Search function
