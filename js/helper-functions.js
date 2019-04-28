@@ -100,13 +100,14 @@ function getHanziTableContent(hanziArray) {
 // Functions for making the cedict table
 
 function getCedictTdContents(hanzi) {
+	let simp = hanzi['s'];
 	return [
-		getWiktionaryLink(hanzi['simplified'], 'w') + ' ' +
-			getSearchLink(hanzi['simplified'], 's'),
-		getHanziLinksFromWord(hanzi['simplified']),
-		hanzi['traditional'],
-		hanzi['pinyin'],
-		hanzi['english']
+		getWiktionaryLink(simp, 'w') + ' ' +
+			getSearchLink(simp, 's'),
+		getHanziLinksFromWord(simp),
+		hanzi['t'],
+		hanzi['p'],
+		hanzi['e']
 	];
 }
 
@@ -133,13 +134,11 @@ function getCedictTableContent(hanziArray) {
 
 // Link functions
 function linkFunctionFactory(baseURL, newTab=false) {
-	return function(path, text='', id='', classes='') {
+	return function(path, text='') {
 		if (!text) {
 			text = path;
 		}
-		return `<a href="${ baseURL + path }" ${ (newTab? 'target="_blank"' : '') }
-			${ (id ? 'id="' + id + '"' : '') } ${ (classes ? 'class="' + classes + '"' : '') }
-			>${ text }</a>`;
+		return `<a href="${ baseURL + path }" ${ (newTab? 'target="_blank"' : '') }>${ text }</a>`;
 	}
 }
 
@@ -165,7 +164,7 @@ function getHanziLinksFromWord(word) {
 
 
 // Search results functions
-function getSearchResultsFunctionFactory(hanziIdx, pinyinIdx, pinyinWODIdx) {
+function getSearchResultsFunctionFactory(data, hanziIdx, pinyinIdx, pinyinWODIdx, sortFunction) {
 	return function (searchWord) {
 		let diacriticsRegExp = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i;
 
@@ -173,14 +172,35 @@ function getSearchResultsFunctionFactory(hanziIdx, pinyinIdx, pinyinWODIdx) {
 
 		let searchResults = []
 
+		// Check if search word is hanzi
 		if (hanziIdx[searchWord]) {
 			searchResults = hanziIdx[searchWord];
 		}
+		// Check if search word is hanzi and had a redundant entry in the index (an entry whose
+		// only listed word was the entry key itself), in this case the entry was removed from
+		// the index (to reduce index size) and we have to check directly in the data
+		else if (data[searchWord]) {
+			searchResults = [ data[searchWord]['simplified'] || data[searchWord]['s'] ];
+		}
+		// Check if search word is pinyin with tone marks
 		else if (diacriticsRegExp.test(searchWord) && pinyinIdx[searchWordLower]) {
 			searchResults = pinyinIdx[searchWordLower];
 		}
+		// Check if search word is pinyin without tone marks
 		else if (pinyinWODIdx[searchWordLower]) {
-			searchResults = pinyinWODIdx[searchWordLower];
+			// Join results from every pinyin with tones (in pinyinIdx) for the
+			// pinyin without tone marks
+			searchResults = pinyinWODIdx[searchWordLower].reduce(
+				(acc, curr) => {
+					return acc.concat(pinyinIdx[curr])
+				}, []);
+			// Avoid duplicate results when a hanzi in most common hanzi has more
+			// than one pinyin or when a cedict word has two syllables with the
+			// same pinyin
+			searchResults = [... new Set(searchResults)];
+
+			// Sort results
+			searchResults.sort(sortFunction);
 		}
 
 		return searchResults;
@@ -188,8 +208,18 @@ function getSearchResultsFunctionFactory(hanziIdx, pinyinIdx, pinyinWODIdx) {
 
 }
 
-let getHanziSearchResults = getSearchResultsFunctionFactory(hanziIndex, pinyinIndex, pinyinWODIndex);
-let getCedictSearchResults = getSearchResultsFunctionFactory(cedictWordIndex, cedictPinyinIndex, cedictPinyinWODIndex);
+function sortByMostCommon(a, b) {
+	return hanziDict[a]['mostCommonRanking'] - hanziDict[b]['mostCommonRanking'];
+}
+
+function sortBySimpLength(a, b) {
+	return a.length - b.length;
+}
+
+let getHanziSearchResults = getSearchResultsFunctionFactory(hanziDict, {}, pinyinIndex,
+	pinyinWODIndex, sortByMostCommon);
+let getCedictSearchResults = getSearchResultsFunctionFactory(cedict, cedictWordIndex,
+	cedictPinyinIndex, cedictPinyinWODIndex, sortBySimpLength);
 
 
 function getRadicalsUl() {
@@ -271,7 +301,7 @@ function getHanziCard(hanzi, hanziDict) {
 						Pinyin
 					</dt>
 					<dd class="hanzi-data-dd" id="hanzi-data-pinyin">
-						${ hanzi.pinyin ? hanzi.pinyin : '--'}
+						${ hanzi.pinyin || '--'}
 					</dd>
 					${
 						hanzi.otherPinyin ?
@@ -299,19 +329,19 @@ function getHanziCard(hanzi, hanziDict) {
 						Ranking in most common hanzi
 					</dt>
 					<dd class="hanzi-data-dd" id="hanzi-data-most-common-ranking">
-						${ hanzi.mostCommonRanking ? hanzi.mostCommonRanking : '--' }
+						${ hanzi.mostCommonRanking || '--' }
 					</dd>
 					<dt class="hanzi-data-dt">
 						HKS level
 					</dt>
 					<dd class="hanzi-data-dd" id="hanzi-data-hks-level">
-						${ hanzi.HKSLevel ? hanzi.HKSLevel : '--' }
+						${ hanzi.HKSLevel || '--' }
 					</dd>
 					<dt class="hanzi-data-dt">
 						Meaning
 					</dt>
 					<dd class="hanzi-data-dd" id="hanzi-data-meaning">
-						${ hanzi.meaning ? hanzi.meaning : '--' }
+						${ hanzi.meaning || '--' }
 					</dd>
 				</dl>
 			</div>
@@ -371,20 +401,20 @@ function getCedictWordDefinition(cedictEntry) {
 				</dt>
 				<dd class="cedict-word-data-dd" id="cedict-word-data-trad">
 					${
-						cedictEntry.traditional ? cedictEntry.traditional : '--'
+						cedictEntry['t'] || '--'
 					}
 				</dd>
 				<dt class="cedict-word-data-dt">
 					Pinyin
 				</dt>
 				<dd class="cedict-word-data-dd" id="cedict-word-data-pinyin">
-					${ cedictEntry.pinyin ? cedictEntry.pinyin : '--'}
+					${ cedictEntry['p'] || '--'}
 				</dd>
 				<dt class="cedict-word-data-dt">
 					Meaning
 				</dt>
 				<dd class="cedict-word-data-dd" id="cedict-word-data-meaning">
-					${ cedictEntry.english ? cedictEntry.english : '--' }
+					${ cedictEntry['e'] || '--' }
 				</dd>
 			</dl>
 	`;

@@ -69,7 +69,7 @@ p {
 	color: #222;
 	
 	/*Add overflow bars if ul is bigger than viewport*/
-	max-height: 95vh;
+	max-height: 90vh;
 	overflow: auto;
 }
 .navbar-dropdown-div:hover .navbar-ul {
