@@ -1,12 +1,14 @@
 // Functions for making tables
 
+// Function factory used to build makeHanziTable and makeCedictTable functions
 function makeTableFunctionFactory(name, colNames) {
 	return function(content, caption) {
+		// Make table headers with the column names
 		let cols = '';
 		for (let colName of colNames) {
 			cols += `<th class="${name}-th">${colName}</th>`;
 		}
-
+		// Add caption, table headers, and body content to the table
 		let table = `
 			<table class="${name}" id="${name}">
 				<caption class="${name}-caption" id="${name}-caption">
@@ -22,11 +24,14 @@ function makeTableFunctionFactory(name, colNames) {
 				</tbody>
 			</table>
 		`;
-
+		// Return table HTML in a string
 		return table;
 	}
 }
 
+// Function for making a hanzi table, takes the body content of the table (as
+// an HTML string with tr elements) and the table name to use as caption
+// Returns the table as an HTML string
 let makeHanziTable = makeTableFunctionFactory('hanzi-table', [
 		'',
 		'Simplified',
@@ -40,6 +45,9 @@ let makeHanziTable = makeTableFunctionFactory('hanzi-table', [
 		'Meaning',
 	]);
 
+// Function for making a cedict definitions table, takes the body content of the
+// table (as an HTML string with tr elements) and the table name to use as caption
+// Returns the table as an HTML string
 let makeCedictTable = makeTableFunctionFactory('cedict-table', [
 		'',
 		'Simplified',
@@ -48,23 +56,33 @@ let makeCedictTable = makeTableFunctionFactory('cedict-table', [
 		'Meaning',
 	]);
 
-
+// Makes an individual tr element (row) to add to the content in the hanzi and cedict tables
+// Takes an array of strings or arrays to use as content of the td (columns) of the 
+// tr (row), and the table name to use in the HTML classes of the tr and td elements
+// Returns an HTML string with the tr
 function getTableTr(tdContents, tableName) {
 	let newTrInnerHTML = `<tr class="${tableName}-tr">`;
 
+	// Iterate over the array of contents
 	for (let tdContent of tdContents) {
 		if (tdContent) {
+			// If the content of the td has multiple values (is an array), join the items
+			// of the array in a comma separated string
 			if (Array.isArray(tdContent)) {
 				newTrInnerHTML += `<td class="${tableName}-td">${tdContent.join(', ')}</td>`;
 			} else {
 				newTrInnerHTML += `<td class="${tableName}-td">${tdContent}</td>`;
 			}
-		} else {
+		}
+		// If the content if undefined fill the td with a default value
+		else {
 			newTrInnerHTML += `<td class="${tableName}-td"> -- </td>`
 		}
 	}
 
 	newTrInnerHTML += '</tr>';
+
+	// Return an HTML string with the tr
 	return newTrInnerHTML;
 
 }
@@ -72,7 +90,10 @@ function getTableTr(tdContents, tableName) {
 
 // Functions for making the hanzi table
 
-// Get rows for hanzi Table function
+// Get table body content (the table rows) for hanzi table function
+// Takes an array of hanzi strings
+// Returns an HTML string with tr elements, each tr has the information of one of the hanzi,
+// the information is taken from hanziDict
 function getHanziTableContent(hanziArray) {
 	let tableContent = '';
 
@@ -101,33 +122,42 @@ function getHanziTableContent(hanziArray) {
 
 // Functions for making the cedict table
 
-function getCedictTdContents(hanzi) {
-	let simp = hanzi['s'];
+// Takes a definition of the cedict (an object)
+// Returns an arrays of strings to be used as the contents of the td elements
+// in the row (tr) corrsponding to the cedict definition passed as an argument
+function getCedictTdContents(cedictDefinition) {
+	let simp = cedictDefinition['s'];
 	return [
 		getWiktionaryLink(simp, 'w') + ' ' +
 			getSearchLink(simp, 's'),
 		getHanziLinksFromWord(simp),
-		hanzi['t'],
-		hanzi['p'],
-		hanzi['e']
+		cedictDefinition['t'],
+		cedictDefinition['p'],
+		cedictDefinition['e']
 	];
 }
 
-function getCedictTableContent(hanziArray) {
+// Get table body content (the table rows) for the cedict table function
+// Takes an array of strings with chinese words
+// Returns an HTML string with tr elements, each tr has the information of one cedict
+// definition corresponding to one of the chinese words
+function getCedictTableContent(wordArray) {
 	let tableContent = '';
 
-	for (let hanzi of hanziArray) {
-		hanzi = cedict[hanzi];
+	for (let word of wordArray) {
+		cedictEntry = cedict[word];
 
-		if (Array.isArray(hanzi)) {
+		// If the cedict entry for the word has more than one definition, make a row for
+		// each definition
+		if (Array.isArray(cedictEntry)) {
 
-			for (let hanziItem of hanzi) {
-				let newTr = getTableTr(getCedictTdContents(hanziItem), 'cedict-table');
+			for (let cedictDefinition of cedictEntry) {
+				let newTr = getTableTr(getCedictTdContents(cedictDefinition), 'cedict-table');
 				tableContent += newTr;
 			}
 
 		} else {
-			let newTr = getTableTr(getCedictTdContents(hanzi), 'cedict-table');
+			let newTr = getTableTr(getCedictTdContents(cedictEntry), 'cedict-table');
 			tableContent += newTr;
 		}
 	}
@@ -137,13 +167,14 @@ function getCedictTableContent(hanziArray) {
 // Link functions
 function linkFunctionFactory(baseURL, newTab=false) {
 	return function(path, text='') {
-		if (!text) {
-			text = path;
-		}
-		return `<a href="${ baseURL + path }" ${ (newTab? 'target="_blank"' : '') }>${ text }</a>`;
+		// if (!text) {
+		// 	text = path;
+		// }
+		return `<a href="${ baseURL + path }" ${ (newTab? 'target="_blank"' : '') }>${ text || path }</a>`;
 	}
 }
 
+// Functions for making links
 let getWiktionaryLink = linkFunctionFactory('https://en.wiktionary.org/wiki/', true);
 let getHanziLink = linkFunctionFactory('#hanzi/');
 let getRadicalLink = linkFunctionFactory('#radical/');
@@ -151,11 +182,14 @@ let getSearchLink = linkFunctionFactory('#search/');
 let getHSKLevelLink = linkFunctionFactory('#hsk/');
 
 
-// Get hanzi links from word function
+// Takes a string with a chinese word (or phrase)
+// Returns a string with all hanzi characters converted in links (anchor HTML elements) to
+// the search results page for that hanzi
 function getHanziLinksFromWord(word) {
 	let result = '';
 	for (let char of word) {
-		// If character is a hanzi add link to result, else add character
+		// If character is a hanzi add link to search results page for that
+		// hanzi, else add character
 		if (!/[a-zA-Z0-9\s,，.:·]/.test(char)) {
 			result += getHanziLink(char);
 		} else {
@@ -168,6 +202,9 @@ function getHanziLinksFromWord(word) {
 
 // Hanzi card function
 
+// Takes a hanzi in a string and the hanziDict object
+// Returns an HTML string with the card component to display the information
+// about the hanzi present in hanziDict
 function getHanziCard(hanzi, hanziDict) {
 	hanzi = hanziDict[hanzi];
 
@@ -251,6 +288,9 @@ function getHanziCard(hanzi, hanziDict) {
 
 // Cedict word card functions
 
+// Takes a chinese word (or phrase) in a string and the cedict object
+// Returns an HTML string with the card component to display the information
+// about the word present in cedict
 function getCedictWordCard(word, cedict) {
 	let cedictEntry = cedict[word];
 	let wordDataContent = '';
@@ -258,7 +298,7 @@ function getCedictWordCard(word, cedict) {
 	// If there is more than one definition for the word display all of them
 	if (Array.isArray(cedictEntry)) {
 		for (let i = 0; i < cedictEntry.length; i++) {
-			wordDataContent = `<div class="cedict-word-definition">${
+			wordDataContent += `<div class="cedict-word-definition">${
 				getCedictWordDefinition(cedictEntry[i])
 			}</div>`;
 		}
@@ -286,7 +326,9 @@ function getCedictWordCard(word, cedict) {
 
 }
 
-function getCedictWordDefinition(cedictEntry) {
+// Takes an object with the cedict definition
+// Returns an HTML string with the information of the cedict definition
+function getCedictWordDefinition(cedictDefinition) {
 	let definition = `
 			<dl class="cedict-word-data-dl">
 
@@ -295,20 +337,20 @@ function getCedictWordDefinition(cedictEntry) {
 				</dt>
 				<dd class="cedict-word-data-dd" id="cedict-word-data-trad">
 					${
-						cedictEntry['t'] || '--'
+						cedictDefinition['t'] || '--'
 					}
 				</dd>
 				<dt class="cedict-word-data-dt">
 					Pinyin
 				</dt>
 				<dd class="cedict-word-data-dd" id="cedict-word-data-pinyin">
-					${ cedictEntry['p'] || '--'}
+					${ cedictDefinition['p'] || '--'}
 				</dd>
 				<dt class="cedict-word-data-dt">
 					Meaning
 				</dt>
 				<dd class="cedict-word-data-dd" id="cedict-word-data-meaning">
-					${ cedictEntry['e'] || '--' }
+					${ cedictDefinition['e'] || '--' }
 				</dd>
 			</dl>
 	`;
@@ -319,6 +361,11 @@ function getCedictWordDefinition(cedictEntry) {
 
 // Radical page functions
 
+// Get HTML string with the ul element to use as a navbar dropdown menu with
+// the links to the radical page for the different radicals, grouped by
+// number of strokes in the traditional form of the radical (radicals that have
+// a different number of strokes in simplified chinese are placed where its
+// traditional form would be or next to its traditional form, if it has both forms)
 function getRadicalsUl() {
 	let radicalsUl = '';
 
@@ -352,14 +399,19 @@ function getRadicalsUl() {
 
 	radicalsUl += '<ul class="navbar-ul">';
 
-	for (let [key, value] of Object.entries(radicalsByStrokeCount)) {
+	// Iterate over every group of radicals (grouped by number of strokes in its
+	// traditional form)
+	for (let [numOfStrokes, radicals] of Object.entries(radicalsByStrokeCount)) {
 
 		let radLinkList = '';
-		for (let rad of value) {
+		// Make links for the radicals with this number of strokes
+		for (let rad of radicals) {
 			radLinkList += getRadicalLink(rad) + ' ';	
 		}
 
-		radicalsUl += `<li>${key}: ${radLinkList}</li>`;	
+		// Add and number of strokes and the radicals with that number of strokes
+		// to radicals ul 
+		radicalsUl += `<li>${numOfStrokes}: ${radLinkList}</li>`;	
 	}
 
 	radicalsUl += '</ul>';
@@ -371,9 +423,13 @@ function getRadicalsUl() {
 
 // HSK Levels page functions
 
+// Get HTML string with the ul element to use as a navbar dropdown menu with
+// the links to the HSK level page for the different HSK levels
 function getHSKLevelsUl() {
 	let HSKLevelsUl = '';
 
+	// Map the URL way of referring to the level with the text that would be
+	// displayed to the user
 	let levelsURLToTextMap = {
 		'level-1': 'Level 1',
 		'level-2': 'Level 2',

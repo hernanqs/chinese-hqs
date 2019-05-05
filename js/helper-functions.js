@@ -1,4 +1,4 @@
-// Search results functions
+// Search results function factory
 function getSearchResultsFunctionFactory(data, hanziIdx, pinyinIdx, pinyinWODIdx, sortFunction) {
 	return function (searchWord) {
 		let diacriticsRegExp = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i;
@@ -43,14 +43,19 @@ function getSearchResultsFunctionFactory(data, hanziIdx, pinyinIdx, pinyinWODIdx
 
 }
 
+// Functions to sort search results, hanzi results will be sort from most common to least
+// common hanzi, cedict entries will be sort from shorter words to longer words (or phrases)
 function sortByMostCommon(a, b) {
 	return hanziDict[a]['mostCommonRanking'] - hanziDict[b]['mostCommonRanking'];
 }
-
 function sortBySimpLength(a, b) {
 	return a.length - b.length;
 }
 
+// Search results functions
+// Take a search word in pinyin or hanzi
+// Return the results of the search as a list of string that are keys in hanziDict
+// or cedict
 let getHanziSearchResults = getSearchResultsFunctionFactory(hanziDict, {}, pinyinIndex,
 	pinyinWODIndex, sortByMostCommon);
 let getCedictSearchResults = getSearchResultsFunctionFactory(cedict, cedictWordIndex,

@@ -90,7 +90,7 @@ p {
 .search-form {
 	display: inline-block;
 
-	/*Avoid space between element*/
+	/*Avoid space between elements*/
 	font-size: 0;
 }
 .search-text {
@@ -140,7 +140,6 @@ p {
 	text-align: right;
 }
 .cedict-table-td:nth-child(1) {
-	/*letter-spacing: 2px;*/
 	min-width: 35px;
 }
 .hanzi-table-td:nth-child(2),

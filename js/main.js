@@ -1,10 +1,11 @@
+// Handle hash redirection, by loading the requested page
 function hashRedirected() {
 	// Map from type of page requested to the function to load the page
 	let pageTypeToLoadFunctionMap = {
-		'hsk': loadHSKPage,
 		'search': loadResultsPage,
 		'hanzi': loadHanziPage,
-		'radical': loadRadicalPage
+		'radical': loadRadicalPage,
+		'hsk': loadHSKPage
 	};
 
 	// Scroll to top of the page
@@ -28,7 +29,7 @@ hashRedirected();
 window.onhashchange = hashRedirected;
 
 
-// Navbar dropdowns
+// Fill navbar dropdowns
 let radicalsDropdownDiv = document.getElementById('radicals-dropdown-div');
 radicalsDropdownDiv.innerHTML += getRadicalsUl();
 
@@ -52,6 +53,6 @@ function handleSearchSubmit (e) {
 	// Get requested search word from form
 	let searchWord = searchText.value.trim();
 
-	// Go to the requested page
+	// Display search results for the searched terms
 	window.location.href = '#search/' + searchWord;
 }

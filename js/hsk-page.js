@@ -5,6 +5,8 @@ function loadHSKPage(hskLevel) {
 	// Clear main section content
 	mainSection.innerHTML = '';
 
+	// Map the URL way of referring to the level with the key used in
+	// the HSK level index
 	let levelsMap = {
 		'level-1': 1,
 		'level-2': 2,
@@ -16,8 +18,6 @@ function loadHSKPage(hskLevel) {
 	}
 
 	hskLevel = levelsMap[hskLevel];
-
-	console.log(hskLevel);
 
 	// Display table with hanzi where the radical appears
 	mainSection.innerHTML += makeHanziTable(
