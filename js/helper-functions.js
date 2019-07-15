@@ -57,7 +57,9 @@ function sortBySimpLength(a, b) {
 // Return the results of the search as a list of string that are keys in hanziDict
 // or cedict
 let getHanziSearchResults = getSearchResultsFunctionFactory(hanziDict, {}, pinyinIndex,
-	pinyinWODIndex, sortByMostCommon);
+	pinyinWODIndex, sortByMostCommon);  // Hanzi index is an empty object because it would
+										// have only redundant entries (entries where every
+										// hanzi points only to itself)
 let getCedictSearchResults = getSearchResultsFunctionFactory(cedict, cedictWordIndex,
 	cedictPinyinIndex, cedictPinyinWODIndex, sortBySimpLength);
 

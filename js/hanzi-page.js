@@ -42,10 +42,23 @@ function loadHanziPage(hanzi) {
 	}
 
 
+	// Get Cedict entries where the hanzi appears
+	let cedictEntries = cedictWordIndex[hanzi];
+	// If only one Cedict entry for the hanzi exist it would not be in the index
+	// (because it would be a redundant entry)
+	if (!cedictEntries && cedict[hanzi]) {
+		cedictEntries = [hanzi]
+	}
 	// Add table whith Cedict entries where the hanzi appears
-	mainSection.innerHTML += makeCedictTable(
-		getCedictTableContent(cedictWordIndex[hanzi]),
-		'Cedict entries where the hanzi appears'
-	);
+	if (cedictEntries) {
+		mainSection.innerHTML += makeCedictTable(
+			getCedictTableContent(cedictWordIndex[hanzi] || [hanzi]),
+			'Cedict entries where the hanzi appears'
+		);
+	}
+	// If there is no entry in Cedict for the requested hanzi
+	else {
+		mainSection.innerHTML += `<div><p>This hanzi does not appears in Cedict</p></div>`
+	}
 	
 }
