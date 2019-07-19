@@ -91,7 +91,7 @@ p {
 	display: inline-block;
 
 	/*Avoid space between elements*/
-	font-size: 0;
+	/*font-size: 0;*/
 }
 .search-text {
 	/*Reset*/
@@ -119,6 +119,24 @@ p {
 	font-family: verdana, helvetica, sans-serif;
 	cursor: pointer;
 }
+.search-language-fieldset {
+	display: inline-flex;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #bbb;
+	border-radius: 3px;
+	font-size: 16px;
+}
+.search-language-fieldset input{
+	display: none;
+}
+.search-language-fieldset label{
+	padding: 0 5px;
+}
+.search-language-fieldset input[type="radio"]:checked~label {
+	color: #3c3c3c;
+	background-color: #fff;
+}
 
 /*Main section styles*/
 .main-section {
@@ -133,6 +151,12 @@ p {
 
 	margin: 10px;
 }
+.hanzi-table-caption, .cedict-table-caption {
+	margin-top: 15px;
+	margin-bottom: 10px;
+	font-size: 20px;
+	font-weight: bold;
+}
 .hanzi-table-th, .cedict-table-th {
 	padding: 10px;
 
@@ -142,6 +166,7 @@ p {
 .cedict-table-td:nth-child(1) {
 	min-width: 35px;
 }
+/* Font size for chinese characters */
 .hanzi-table-td:nth-child(2),
 .hanzi-table-td:nth-child(3),
 .cedict-table-td:nth-child(2),
@@ -235,4 +260,16 @@ p {
 .cedict-word-definition:last-child {
 	padding-bottom: 0;
 	box-shadow: none;
+}
+
+/* Search results page styles*/
+.search-results-h1 {
+	margin-top: 15px;
+	margin-bottom: 10px;
+}
+.results-not-found {
+	margin-top: 15px;
+	margin-bottom: 10px;
+	font-size: 20px;
+	font-weight: bold;
 }

@@ -14,7 +14,7 @@ function hashRedirected() {
 	if (location.hash) {
 		// Get requested type and value from location
 		let type = location.hash.slice(1).split('/')[0];
-		let value = decodeURIComponent(location.hash.slice(1).split('/')[1]);
+		let value = decodeURIComponent(location.hash.slice(1).split('/')[1].split('?')[0]);
 
 		// Go to the requested page
 		let loadPage = pageTypeToLoadFunctionMap[type];
@@ -41,7 +41,8 @@ HSKLevelsDropdownDiv.innerHTML += getHSKLevelsUl();
 
 // Get HTML search form elements
 let searchForm = document.getElementById('search-form');
-let searchText = document.getElementById('search-text');
+let searchTextInput = document.getElementById('search-text');
+let searchEnglishInput = document.getElementById('search-english');
 
 searchForm.addEventListener('submit', handleSearchSubmit);
 
@@ -51,8 +52,13 @@ function handleSearchSubmit (e) {
 	e.preventDefault();
 
 	// Get requested search word from form
-	let searchWord = searchText.value.trim();
+	let searchText = searchTextInput.value.trim().replace(/[,/#?=]/, ' ').replace(/ +/, ' ');
+	console.log(`searchtext:${searchText}`);
 
-	// Display search results for the searched terms
-	window.location.href = '#search/' + searchWord;
+	// Get search language (chinese is the default)
+	let searchLanguage = searchEnglishInput.checked? 'En' : 'Ch';
+	console.log('main.js', searchLanguage);
+
+	// Redirect to the search results page for the searched terms
+	window.location.href = '#search/' + searchText + '?search-lang=' + searchLanguage;
 }

@@ -23,8 +23,8 @@ function loadHSKPage(hskLevel) {
 	mainSection.innerHTML += makeHanziTable(
 		getHanziTableContent(HSKLevelIndex[hskLevel]),
 		typeof hskLevel == 'number' ?
-			`Hanzi in HSK level ${ hskLevel }`
-			: 'Hanzi that are not in HSK'
+			`${ HSKLevelIndex[hskLevel].length } of 3000 most common hanzi are in HSK level ${ hskLevel }`
+			: `${ HSKLevelIndex[hskLevel].length } of 3000 most common hanzi that are not in HSK`
 		);
 
 }

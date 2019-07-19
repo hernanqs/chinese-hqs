@@ -1,18 +1,28 @@
-function loadResultsPage(searchWord) {
+function loadResultsPage(searchText) {
+	let searchLanguage = getURLParams()['search-lang'];
 
-	let hanziResults = getHanziSearchResults(searchWord);
-	let cedictResults = getCedictSearchResults(searchWord);
+	let hanziResults, cedictResults;
+
+	if (searchLanguage == 'Ch') {
+		hanziResults = getHanziSearchResults(searchText);
+		cedictResults = getCedictSearchResults(searchText);
+	} else if (searchLanguage == 'En') {
+		hanziResults = getHanziEnglishSearchResults(searchText);
+		cedictResults = getCedictEnglishSearchResults(searchText);
+	}
 
 	let mainSection = document.getElementById('main-section');
 
 	// Clear main section content
 	mainSection.innerHTML = '';
 
+	mainSection.innerHTML += `<h1 class="search-results-h1">Results for "${ searchText }"</h1>`;
+
 	// Add results from hanzi search
 	if (hanziResults.length > 0) {
 		mainSection.innerHTML += makeHanziTable(
 			getHanziTableContent(hanziResults),
-			'Results from 3000 most common hanzi'
+			hanziResults.length + ' result(s) from 3000 most common hanzi'
 			);
 
 	} else {
@@ -28,7 +38,7 @@ function loadResultsPage(searchWord) {
 	if (cedictResults.length > 0) {
 		mainSection.innerHTML += makeCedictTable(
 			getCedictTableContent(cedictResults),
-			'Results from Cedict'
+			cedictResults.length + ' result(s) from Cedict'
 			);
 
 	} else {

@@ -18,10 +18,22 @@
 				<p>Radicals</p>
 			</div>
 
-			<form action="" class="search-form navbar-item" id="search-form">
+			<form action="" class="search-form navbar-item" id="search-form" onsubmit="event.preventDefault()">
 				<input type="text" name="search-text" class="search-text" id="search-text"
 				placeholder="Enter hanzi or pinyin"><!-- 
 				 --><input type="submit" class="submit-btn" id="submit-btn" value="Search">
+
+				<fieldset class="search-language-fieldset" id="search-language-fieldset">
+					<div class="radio-form-field">
+						<input type="radio" name="search-language" id="search-chinese" required checked>
+						<label for="search-chinese">Ch</label>
+					</div>
+					<div class="radio-form-field">
+						<input type="radio" name="search-language" id="search-english" required>
+						<label for="search-english">En</label>
+					</div>
+				</fieldset>
+
 			</form>
 
 		</nav>
@@ -46,6 +58,9 @@
 	<script src="indices/cedictWordIndex.js"></script>
 	<script src="indices/cedictPinyinIndex.js"></script>
 	<script src="indices/cedictPinyinWODIndex.js"></script>
+
+	<script src="indices/hanziEnglishIndex.js"></script>
+	<script src="indices/cedictEnglishIndex.js"></script>
 
 	<script src="indices/radicalIndex.js"></script>
 	<script src="indices/HSKLevelIndex.js"></script>
