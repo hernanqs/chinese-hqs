@@ -1,7 +1,8 @@
 function loadResultsPage(searchText) {
-	let searchLanguage = getURLParams()['search-lang'];
+	// let searchLanguage = getURLParams()['search-lang'];
+	let searchLanguage = getHashParams()['search-lang'];
 
-	let hanziResults, cedictResults;
+	let hanziResults = [], cedictResults = [];
 
 	if (searchLanguage == 'Ch') {
 		hanziResults = getHanziSearchResults(searchText);

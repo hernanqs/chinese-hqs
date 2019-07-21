@@ -129,7 +129,7 @@ function getCedictTdContents(cedictDefinition) {
 	let simp = cedictDefinition['s'];
 	return [
 		getWiktionaryLink(simp, 'w') + ' ' +
-			getSearchLink(simp, 's'),
+			getSearchLink(simp + '&search-lang=Ch', 's'),
 		getHanziLinksFromWord(simp),
 		cedictDefinition['t'],
 		cedictDefinition['p'],
@@ -147,9 +147,22 @@ function getCedictTableContent(wordArray) {
 	for (let word of wordArray) {
 		cedictEntry = cedict[word];
 
+		// If word is not in Cedict use empty fallback values
+		if (!cedictEntry) {
+			tableContent += getTableTr([
+					getWiktionaryLink(word, 'w') + ' ' +
+						getSearchLink(word + '&search-lang=Ch', 's'),
+					getHanziLinksFromWord(word),
+					'--',
+					'--',
+					'--'
+				],
+				'cedict-table'
+			);
+		}
 		// If the cedict entry for the word has more than one definition, make a row for
 		// each definition
-		if (Array.isArray(cedictEntry)) {
+		else if (Array.isArray(cedictEntry)) {
 
 			for (let cedictDefinition of cedictEntry) {
 				let newTr = getTableTr(getCedictTdContents(cedictDefinition), 'cedict-table');
@@ -167,19 +180,17 @@ function getCedictTableContent(wordArray) {
 // Link functions
 function linkFunctionFactory(baseURL, newTab=false) {
 	return function(path, text='') {
-		// if (!text) {
-		// 	text = path;
-		// }
 		return `<a href="${ baseURL + path }" ${ (newTab? 'target="_blank"' : '') }>${ text || path }</a>`;
 	}
 }
 
 // Functions for making links
 let getWiktionaryLink = linkFunctionFactory('https://en.wiktionary.org/wiki/', true);
-let getHanziLink = linkFunctionFactory('#hanzi/');
-let getRadicalLink = linkFunctionFactory('#radical/');
-let getSearchLink = linkFunctionFactory('#search/');
-let getHSKLevelLink = linkFunctionFactory('#hsk/');
+let getHanziLink = linkFunctionFactory('#type=hanzi&value=');
+let getRadicalLink = linkFunctionFactory('#type=radical&value=');
+let getSearchLink = linkFunctionFactory('#type=search&value=');
+let getHSKLevelLink = linkFunctionFactory('#type=hsk&value=');
+let getListLink = linkFunctionFactory('#type=list&value=');
 
 
 // Takes a string with a chinese word (or phrase)
@@ -361,12 +372,12 @@ function getCedictWordDefinition(cedictDefinition) {
 
 // Radical page functions
 
-// Get HTML string with the ul element to use as a navbar dropdown menu with
+// Get HTML string with the ul element to be used in the navbar dropdown menu with
 // the links to the radical page for the different radicals, grouped by
 // number of strokes in the traditional form of the radical (radicals that have
 // a different number of strokes in simplified chinese are placed where its
 // traditional form would be or next to its traditional form, if it has both forms)
-function getRadicalsUl() {
+function getRadicalsDropdown() {
 	let radicalsUl = '';
 
 	let radicalsByStrokeCount = {
@@ -397,7 +408,8 @@ function getRadicalsUl() {
 		16: ['龙', '龟']
 	}
 
-	radicalsUl += '<ul class="navbar-ul">';
+	// radicalsUl += '<ul class="navbar-dropdown">';
+	radicalsUl += '<div class="navbar-dropdown"><ul class="navbar-ul">';
 
 	// Iterate over every group of radicals (grouped by number of strokes in its
 	// traditional form)
@@ -414,7 +426,8 @@ function getRadicalsUl() {
 		radicalsUl += `<li>${numOfStrokes}: ${radLinkList}</li>`;	
 	}
 
-	radicalsUl += '</ul>';
+	// radicalsUl += '</ul>';
+	radicalsUl += '</ul></div>';
 
 	return radicalsUl;
 
@@ -423,9 +436,37 @@ function getRadicalsUl() {
 
 // HSK Levels page functions
 
-// Get HTML string with the ul element to use as a navbar dropdown menu with
-// the links to the HSK level page for the different HSK levels
-function getHSKLevelsUl() {
+// Get HTML string with the ul element to use in the navbar dropdown menu with
+// the links to the lists of HSK words by levels
+function getCedictHSKLevelsUl() {
+	let HSKLevelsUl = '';
+
+	// // Map the URL way of referring to the level with the text that would be
+	// // displayed to the user
+	let levelsURLToTextMap = {
+		'HSK1List': 'Level 1',
+		'HSK2List': 'Level 2',
+		'HSK3List': 'Level 3',
+		'HSK4List': 'Level 4',
+		'HSK5List': 'Level 5',
+		'HSK6List': 'Level 6',
+	};
+
+	HSKLevelsUl += '<ul class="navbar-ul">';
+
+	for (let [url, text] of Object.entries(levelsURLToTextMap)) {
+		HSKLevelsUl += `<li>${ getListLink(url, text) }</li>`;	
+	}
+
+	HSKLevelsUl += '</ul>';
+
+	return HSKLevelsUl;
+
+}
+
+// Get HTML string with the ul element to use in the navbar dropdown menu with
+// the links to the HSK level page with the hanzi grouped by level
+function getHanziHSKLevelsUl() {
 	let HSKLevelsUl = '';
 
 	// Map the URL way of referring to the level with the text that would be
@@ -450,4 +491,15 @@ function getHSKLevelsUl() {
 
 	return HSKLevelsUl;
 
+}
+
+// Get HTML string with the navbar dropdown menu with for the HSK levels
+function getHSKLevelsDropdown() {
+	return `<div class="navbar-dropdown">
+			<p class="dropdown-subtitle">Cedict</p>
+			${ getCedictHSKLevelsUl() }
+			<p class="dropdown-subtitle">Hanzi</p>
+			${ getHanziHSKLevelsUl() }
+		</div>
+		`
 }

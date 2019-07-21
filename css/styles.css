@@ -52,7 +52,7 @@ p {
 .navbar-item {
 	margin: 2px 20px 2px 0;
 }
-.navbar-dropdown-div {
+.navbar-dropdown-container {
 	display: inline-block;
 	position: relative;
 	text-align: justify;
@@ -60,7 +60,7 @@ p {
 	vertical-align: center;
 }
 
-.navbar-dropdown-div .navbar-ul {
+.navbar-dropdown-container .navbar-dropdown {
 	display: none;
 	box-shadow: 0px 1px 1px #808080;
 	padding: 5px;
@@ -72,19 +72,27 @@ p {
 	max-height: 90vh;
 	overflow: auto;
 }
-.navbar-dropdown-div:hover .navbar-ul {
+.navbar-dropdown-container:hover .navbar-dropdown {
 	/*Make ul visible as dropdown menu*/
 	display: block;
 	position: absolute;
-	top: 2px;
+	top: 22px;
 	right: 0;
 	z-index: 1;
 }
-#radicals-dropdown-div .navbar-ul{
+#radicals-dropdown-container .navbar-dropdown{
 	min-width: 450px;
 }
-#hsk-levels-dropdown-div .navbar-ul{
+#hsk-levels-dropdown-container .navbar-dropdown{
 	min-width: 105px;
+}
+#hsk-levels-dropdown-container .navbar-dropdown p {
+	margin: 5px 0;
+	color: #3c3c3c;
+	font-size: 16px;
+}
+.navbar-ul {
+	margin:0;
 }
 
 .search-form {

@@ -110,24 +110,24 @@ let getHanziEnglishSearchResults = getEnglishSearchResultsFunctionFactory(cedict
 let getCedictEnglishSearchResults = getEnglishSearchResultsFunctionFactory(cedict, cedictEnglishIndex, sortByLength);
 
 
-// Get URL Parameters and return them in an object
-function getURLParams() {
-	// Get a string containing the URL parameters 
-	var paramsString = window.location.href.split('?')[1];
+// Get hash Parameters and return them in an object
+function getHashParams() {
+	// Get a string containing the hash parameters 
+	var paramsString = window.location.href.split('#')[1];
 
-	// If there are not URL parameters, return an empty object
+	// If there are not hash parameters, return an empty object
 	if (!paramsString) {
 		return {};
 	}
-	// Split the string containg the URL parameters into
+	// Split the string containg the hash parameters into
 	// key-value pairs
 	var pairs = paramsString.split('&');
 
-	// Create an object containing the URL parameters and return it
+	// Create an object containing the hash parameters and return it
 	var paramsObj = {};
 	for (var i = 0; i < pairs.length; i++) {
 		var pair = pairs[i].split('=');
-		paramsObj[pair[0]] = pair[1];
+		paramsObj[pair[0]] = decodeURIComponent(pair[1]);
 	}
 	return paramsObj;
 }

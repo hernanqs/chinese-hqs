@@ -5,7 +5,8 @@ function hashRedirected() {
 		'search': loadResultsPage,
 		'hanzi': loadHanziPage,
 		'radical': loadRadicalPage,
-		'hsk': loadHSKPage
+		'hsk': loadHSKPage,
+		'list': loadListPage,
 	};
 
 	// Scroll to top of the page
@@ -13,8 +14,9 @@ function hashRedirected() {
 
 	if (location.hash) {
 		// Get requested type and value from location
-		let type = location.hash.slice(1).split('/')[0];
-		let value = decodeURIComponent(location.hash.slice(1).split('/')[1].split('?')[0]);
+		let hashParams = getHashParams();
+		let type = hashParams['type'];
+		let value = hashParams['value'];
 
 		// Go to the requested page
 		let loadPage = pageTypeToLoadFunctionMap[type];
@@ -30,11 +32,11 @@ window.onhashchange = hashRedirected;
 
 
 // Fill navbar dropdowns
-let radicalsDropdownDiv = document.getElementById('radicals-dropdown-div');
-radicalsDropdownDiv.innerHTML += getRadicalsUl();
+let radicalsDropdownDiv = document.getElementById('radicals-dropdown-container');
+radicalsDropdownDiv.innerHTML += getRadicalsDropdown();
 
-let HSKLevelsDropdownDiv = document.getElementById('hsk-levels-dropdown-div');
-HSKLevelsDropdownDiv.innerHTML += getHSKLevelsUl();
+let HSKLevelsDropdownDiv = document.getElementById('hsk-levels-dropdown-container');
+HSKLevelsDropdownDiv.innerHTML += getHSKLevelsDropdown();
 
 
 // Search function
@@ -52,7 +54,7 @@ function handleSearchSubmit (e) {
 	e.preventDefault();
 
 	// Get requested search word from form
-	let searchText = searchTextInput.value.trim().replace(/[,/#?=]/, ' ').replace(/ +/, ' ');
+	let searchText = searchTextInput.value.trim().replace(/[,/#?=.]/, ' ').replace(/ +/, ' ');
 	console.log(`searchtext:${searchText}`);
 
 	// Get search language (chinese is the default)
@@ -60,5 +62,6 @@ function handleSearchSubmit (e) {
 	console.log('main.js', searchLanguage);
 
 	// Redirect to the search results page for the searched terms
-	window.location.href = '#search/' + searchText + '?search-lang=' + searchLanguage;
+	// window.location.href = '#search/' + searchText + '?search-lang=' + searchLanguage;
+	window.location.href = '#type=search&value=' + searchText + '&search-lang=' + searchLanguage;
 }
