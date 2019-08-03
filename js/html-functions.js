@@ -98,22 +98,24 @@ function getHanziTableContent(hanziArray) {
 	let tableContent = '';
 
 	for (let hanzi of hanziArray) {
-		hanzi = hanziDict[hanzi];
+		if (hanziDict[hanzi]) {
+			hanzi = hanziDict[hanzi];
 
-		let tdContents = [
-			getWiktionaryLink(hanzi['simplified'], 'w', true),
-			getHanziLink(hanzi['simplified']),
-			hanzi['traditional']? hanzi['traditional'].map(h =>getWiktionaryLink(h)) : '--',
-			hanzi['pinyin'],
-			hanzi['otherPinyin'],
-			hanzi['mostCommonRanking'],
-			hanzi['HSKLevel'],
-			getRadicalLink(hanzi['radical']) + hanzi['radicalAndExtraStrokes'].slice(1),
-			hanzi['strokeNumber'],
-			hanzi['meaning']
-		]
+			let tdContents = [
+				getWiktionaryLink(hanzi['simplified'], 'w', true),
+				getHanziLink(hanzi['simplified']),
+				hanzi['traditional']? hanzi['traditional'].map(h =>getWiktionaryLink(h)) : '--',
+				hanzi['pinyin'],
+				hanzi['otherPinyin'],
+				hanzi['mostCommonRanking'],
+				hanzi['HSKLevel'],
+				getRadicalLink(hanzi['radical']) + hanzi['radicalAndExtraStrokes'].slice(1),
+				hanzi['strokeNumber'],
+				hanzi['meaning']
+			]
 
-		tableContent += getTableTr(tdContents, 'hanzi-table');
+			tableContent += getTableTr(tdContents, 'hanzi-table');
+		}
 
 	}
 	return tableContent;
@@ -129,7 +131,8 @@ function getCedictTdContents(cedictDefinition) {
 	let simp = cedictDefinition['s'];
 	return [
 		getWiktionaryLink(simp, 'w') + ' ' +
-			getSearchLink(simp + '&search-lang=Ch', 's'),
+			getSearchLink(simp + '&search-lang=Ch', 's') + ' ' +
+			getCedictEntryLink(simp, '→'),
 		getHanziLinksFromWord(simp),
 		cedictDefinition['t'],
 		cedictDefinition['p'],
@@ -191,6 +194,7 @@ let getRadicalLink = linkFunctionFactory('#type=radical&value=');
 let getSearchLink = linkFunctionFactory('#type=search&value=');
 let getHSKLevelLink = linkFunctionFactory('#type=hsk&value=');
 let getListLink = linkFunctionFactory('#type=list&value=');
+let getCedictEntryLink = linkFunctionFactory('#type=cedict-entry&value=');
 
 
 // Takes a string with a chinese word (or phrase)
@@ -217,82 +221,86 @@ function getHanziLinksFromWord(word) {
 // Returns an HTML string with the card component to display the information
 // about the hanzi present in hanziDict
 function getHanziCard(hanzi, hanziDict) {
-	hanzi = hanziDict[hanzi];
+	if (hanziDict[hanzi]) {
+		hanzi = hanziDict[hanzi];
 
-	let hanziCard = `
-		<section class="hanzi-card">
-			<div class="hanzi-card-simp-div">
-				<p class="hanzi-card-simp" id="hanzi-card-simp">${ hanzi.simplified }</p>
-				${ getWiktionaryLink(hanzi.simplified, 'Wiktionary') }
-			</div>
-			<div class="hanzi-data">
-				<dl class="hanzi-data-dl">
-					${
-						hanzi.traditional ?
-							`<dt class="hanzi-data-dt">
-								Traditional
-							</dt>
-							<dd class="hanzi-data-dd" id="hanzi-data-trad">
-								${
-									hanzi.traditional.join(', ')
-								}
-							</dd>`
-							: ''
-					}
-					<dt class="hanzi-data-dt">
-						Pinyin
-					</dt>
-					<dd class="hanzi-data-dd" id="hanzi-data-pinyin">
-						${ hanzi.pinyin || '--'}
-					</dd>
-					${
-						hanzi.otherPinyin ?
-							`<dt class="hanzi-data-dt">
-								Other pinyin
-							</dt>
-							<dd class="hanzi-data-dd" id="hanzi-data-other-pinyin">
-								${
-									hanzi.otherPinyin.join(', ')
-								}
-							</dd>`
-							: ''
-					}
-					<dt class="hanzi-data-dt">
-						Radical
-					</dt>
-					<dd class="hanzi-data-dd" id="hanzi-data-radical">
+		let hanziCard = `
+			<section class="hanzi-card">
+				<div class="hanzi-card-simp-div">
+					<p class="hanzi-card-simp" id="hanzi-card-simp">${ hanzi.simplified }</p>
+					${ getWiktionaryLink(hanzi.simplified, 'Wiktionary') }
+				</div>
+				<div class="hanzi-data">
+					<dl class="hanzi-data-dl">
 						${
-							hanzi.radical ?
-							getRadicalLink(hanzi.radical) + hanzi.radicalAndExtraStrokes.slice(1) 
-							: '--'
+							hanzi.traditional ?
+								`<dt class="hanzi-data-dt">
+									Traditional
+								</dt>
+								<dd class="hanzi-data-dd" id="hanzi-data-trad">
+									${
+										hanzi.traditional.join(', ')
+									}
+								</dd>`
+								: ''
 						}
-					</dd>
-					<dt class="hanzi-data-dt">
-						Ranking in most common hanzi
-					</dt>
-					<dd class="hanzi-data-dd" id="hanzi-data-most-common-ranking">
-						${ hanzi.mostCommonRanking || '--' }
-					</dd>
-					<dt class="hanzi-data-dt">
-						HSK level
-					</dt>
-					<dd class="hanzi-data-dd" id="hanzi-data-hsk-level">
-						${ hanzi.HSKLevel || '--' }
-					</dd>
-					<dt class="hanzi-data-dt">
-						Meaning
-					</dt>
-					<dd class="hanzi-data-dd" id="hanzi-data-meaning">
-						${ hanzi.meaning || '--' }
-					</dd>
-				</dl>
-			</div>
-			<div class="stroke-order-div" id="stroke-order-div">
-			</div>
-		</section>
-	`;
+						<dt class="hanzi-data-dt">
+							Pinyin
+						</dt>
+						<dd class="hanzi-data-dd" id="hanzi-data-pinyin">
+							${ hanzi.pinyin || '--'}
+						</dd>
+						${
+							hanzi.otherPinyin ?
+								`<dt class="hanzi-data-dt">
+									Other pinyin
+								</dt>
+								<dd class="hanzi-data-dd" id="hanzi-data-other-pinyin">
+									${
+										hanzi.otherPinyin.join(', ')
+									}
+								</dd>`
+								: ''
+						}
+						<dt class="hanzi-data-dt">
+							Radical
+						</dt>
+						<dd class="hanzi-data-dd" id="hanzi-data-radical">
+							${
+								hanzi.radical ?
+								getRadicalLink(hanzi.radical) + hanzi.radicalAndExtraStrokes.slice(1) 
+								: '--'
+							}
+						</dd>
+						<dt class="hanzi-data-dt">
+							Ranking in most common hanzi
+						</dt>
+						<dd class="hanzi-data-dd" id="hanzi-data-most-common-ranking">
+							${ hanzi.mostCommonRanking || '--' }
+						</dd>
+						<dt class="hanzi-data-dt">
+							HSK level
+						</dt>
+						<dd class="hanzi-data-dd" id="hanzi-data-hsk-level">
+							${ hanzi.HSKLevel || '--' }
+						</dd>
+						<dt class="hanzi-data-dt">
+							Meaning
+						</dt>
+						<dd class="hanzi-data-dd" id="hanzi-data-meaning">
+							${ hanzi.meaning || '--' }
+						</dd>
+					</dl>
+				</div>
+				<div class="stroke-order-div" id="stroke-order-div">
+				</div>
+			</section>
+		`;
 
-	return hanziCard;
+		return hanziCard;
+	} else {
+		return '';
+	}
 
 }
 
@@ -303,38 +311,42 @@ function getHanziCard(hanzi, hanziDict) {
 // Returns an HTML string with the card component to display the information
 // about the word present in cedict
 function getCedictWordCard(word, cedict) {
-	let cedictEntry = cedict[word];
-	let wordDataContent = '';
+	if (cedict[word]) {
+		let cedictEntry = cedict[word];
+		let wordDataContent = '';
 
-	// If there is more than one definition for the word display all of them
-	if (Array.isArray(cedictEntry)) {
-		for (let i = 0; i < cedictEntry.length; i++) {
-			wordDataContent += `<div class="cedict-word-definition">${
-				getCedictWordDefinition(cedictEntry[i])
-			}</div>`;
+		// If there is more than one definition for the word display all of them
+		if (Array.isArray(cedictEntry)) {
+			for (let i = 0; i < cedictEntry.length; i++) {
+				wordDataContent += `<div class="cedict-word-definition">${
+					getCedictWordDefinition(cedictEntry[i])
+				}</div>`;
+			}
+		} else {
+			wordDataContent = getCedictWordDefinition(cedictEntry);
 		}
+
+		let simplified = word;
+
+		let cedictWordCard = `
+			<section class="cedict-word-card">
+				<div class="cedict-word-card-simp-div">
+					<p class="cedict-word-card-simp" id="cedict-word-card-simp">${ simplified }</p>
+					${ getWiktionaryLink(simplified, 'Wiktionary') }
+				</div>
+				<div class="cedict-word-data">
+					${ wordDataContent }
+				</div>
+				<div class="stroke-order-div" id="stroke-order-div">
+				</div>
+			</section>
+		`;
+
+		return cedictWordCard;
+	
 	} else {
-		wordDataContent = getCedictWordDefinition(cedictEntry);
+		return '';
 	}
-
-	let simplified = word;
-
-	let cedictWordCard = `
-		<section class="cedict-word-card">
-			<div class="cedict-word-card-simp-div">
-				<p class="cedict-word-card-simp" id="cedict-word-card-simp">${ simplified }</p>
-				${ getWiktionaryLink(simplified, 'Wiktionary') }
-			</div>
-			<div class="cedict-word-data">
-				${ wordDataContent }
-			</div>
-			<div class="stroke-order-div" id="stroke-order-div">
-			</div>
-		</section>
-	`;
-
-	return cedictWordCard;
-
 }
 
 // Takes an object with the cedict definition

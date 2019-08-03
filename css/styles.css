@@ -10,7 +10,7 @@ html, body {
 
 	color: #222;
 	font-size: 18px;
-	font-family: verdana, helvetica, sans-serif;
+	font-family:  verdana, Arial, Helvetica, "Microsoft YaHei New", "Microsoft Yahei", "微软雅黑", 宋体, SimSun, STXihei, "华文细黑", sans-serif;
 }
 
 body {
@@ -168,7 +168,7 @@ p {
 .hanzi-table-th, .cedict-table-th {
 	padding: 10px;
 
-	color: #000;
+	color: #222;
 	text-align: right;
 }
 .cedict-table-td:nth-child(1) {
@@ -202,6 +202,9 @@ p {
 	text-align: left;
 	padding-left: 16px;
 }
+.cedict-table-td:first-child {
+	min-width: 65px;
+}
 
 /*Hanzi page styles*/
 .hanzi-card, .cedict-word-card {
@@ -233,8 +236,12 @@ p {
 
 	color: #000;
 }
-.hanzi-card-simp, .cedict-word-card-simp {
+.hanzi-card-simp {
 	font-size: 150px;
+	margin: 0;
+}
+.cedict-word-card-simp {
+	font-size: 100px;
 	margin: 0;
 }
 .hanzi-data-dt, .cedict-word-data-dt {
@@ -242,7 +249,7 @@ p {
 	grid-row: 2 / 3;
 
 	font-weight: bold;
-	color: #000;
+	color: #222;
 }
 #cedict-word-data-trad, #hanzi-data-trad {
 	font-size: 24px;

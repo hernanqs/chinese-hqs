@@ -7,6 +7,7 @@ function hashRedirected() {
 		'radical': loadRadicalPage,
 		'hsk': loadHSKPage,
 		'list': loadListPage,
+		'cedict-entry': loadCedictEntryPage,
 	};
 
 	// Scroll to top of the page
