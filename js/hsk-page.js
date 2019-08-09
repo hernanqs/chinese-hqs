@@ -1,3 +1,4 @@
+'use strict';
 function loadHSKPage(hskLevel) {
 
 	let mainSection = document.getElementById('main-section');

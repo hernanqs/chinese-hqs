@@ -1,3 +1,4 @@
+'use strict';
 // Search results function factory
 function getSearchResultsFunctionFactory(data, hanziIdx, pinyinIdx, pinyinWODIdx, sortFunction) {
 	return function (searchText) {

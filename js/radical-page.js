@@ -1,3 +1,4 @@
+'use strict';
 function loadRadicalPage(radical) {
 
 	let mainSection = document.getElementById('main-section');

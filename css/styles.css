@@ -56,8 +56,6 @@ p {
 	display: inline-block;
 	position: relative;
 	text-align: justify;
-
-	vertical-align: center;
 }
 
 .navbar-dropdown-container .navbar-dropdown {
@@ -105,7 +103,7 @@ p {
 	/*Reset*/
 	margin: 0;
 	border: none;
-	border-radius: none;
+	border-radius: 0;
 
 	box-shadow: 0px 1px 0px #bbb;
 
@@ -128,12 +126,20 @@ p {
 	cursor: pointer;
 }
 .search-language-fieldset {
-	display: inline-flex;
+	display: inline-block;
+	flex-direction: row;
+	width: 66px;
 	margin: 0;
 	padding: 0;
 	border: 1px solid #bbb;
 	border-radius: 3px;
 	font-size: 16px;
+}
+.radio-form-field {
+	display: inline-block;
+	width: 30px;
+	margin: 0;
+	padding: 0;
 }
 .search-language-fieldset input{
 	display: none;

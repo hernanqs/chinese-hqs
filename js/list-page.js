@@ -1,3 +1,4 @@
+'use strict';
 function loadListPage(listName) {
 
 	let mainSection = document.getElementById('main-section');

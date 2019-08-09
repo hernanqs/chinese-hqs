@@ -1,3 +1,4 @@
+'use strict';
 // Functions for making tables
 
 // Function factory used to build makeHanziTable and makeCedictTable functions
@@ -148,7 +149,7 @@ function getCedictTableContent(wordArray) {
 	let tableContent = '';
 
 	for (let word of wordArray) {
-		cedictEntry = cedict[word];
+		let cedictEntry = cedict[word];
 
 		// If word is not in Cedict use empty fallback values
 		if (!cedictEntry) {

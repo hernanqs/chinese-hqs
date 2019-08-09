@@ -1,3 +1,4 @@
+'use strict';
 function loadCedictEntryPage(cedictEntry) {
 
 	let mainSection = document.getElementById('main-section');
@@ -17,8 +18,8 @@ function loadCedictEntryPage(cedictEntry) {
 	let wordsInEntry = [];
 	// Search the entries of the hanzi in the cedict index, in order to get all words (Cedict
 	// entries) that appear inside the Cedict entry
-	for (hanzi of hanziInEntry) {
-		for (entryInIndex of cedictWordIndex[hanzi]) {
+	for (let hanzi of hanziInEntry) {
+		for (let entryInIndex of cedictWordIndex[hanzi]) {
 			if (cedictEntry.includes(entryInIndex)) {
 				if (!wordsInEntry.includes(entryInIndex) && entryInIndex !== cedictEntry) {
 					wordsInEntry.push(entryInIndex);

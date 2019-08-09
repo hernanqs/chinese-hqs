@@ -1,3 +1,4 @@
+'use strict';
 function loadResultsPage(searchText) {
 	// let searchLanguage = getURLParams()['search-lang'];
 	let searchLanguage = getHashParams()['search-lang'];

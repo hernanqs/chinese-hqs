@@ -1,3 +1,4 @@
+'use strict';
 // Handle hash redirection, by loading the requested page
 function hashRedirected() {
 	// Map from type of page requested to the function to load the page
@@ -56,13 +57,20 @@ function handleSearchSubmit (e) {
 
 	// Get requested search word from form
 	let searchText = searchTextInput.value.trim().replace(/[,/#?=.]/, ' ').replace(/ +/, ' ');
-	console.log(`searchtext:${searchText}`);
 
 	// Get search language (chinese is the default)
 	let searchLanguage = searchEnglishInput.checked? 'En' : 'Ch';
-	console.log('main.js', searchLanguage);
 
 	// Redirect to the search results page for the searched terms
 	// window.location.href = '#search/' + searchText + '?search-lang=' + searchLanguage;
 	window.location.href = '#type=search&value=' + searchText + '&search-lang=' + searchLanguage;
+}
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+	navigator.serviceWorker.register('/sw.js')
+		.then((reg) => console.log('Registration succeeded'))
+		.catch((err) => console.log('Registration failed', err));
+} else {
+	console.log('serviceWorker not in navigator');
 }
