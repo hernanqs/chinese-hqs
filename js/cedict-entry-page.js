@@ -19,10 +19,12 @@ function loadCedictEntryPage(cedictEntry) {
 	// Search the entries of the hanzi in the cedict index, in order to get all words (Cedict
 	// entries) that appear inside the Cedict entry
 	for (let hanzi of hanziInEntry) {
-		for (let entryInIndex of cedictWordIndex[hanzi]) {
-			if (cedictEntry.includes(entryInIndex)) {
-				if (!wordsInEntry.includes(entryInIndex) && entryInIndex !== cedictEntry) {
-					wordsInEntry.push(entryInIndex);
+		if (cedictWordIndex[hanzi]) {
+			for (let entryInIndex of cedictWordIndex[hanzi]) {
+				if (cedictEntry.includes(entryInIndex)) {
+					if (!wordsInEntry.includes(entryInIndex) && entryInIndex !== cedictEntry) {
+						wordsInEntry.push(entryInIndex);
+					}
 				}
 			}
 		}

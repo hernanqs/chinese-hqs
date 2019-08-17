@@ -76,7 +76,8 @@ self.addEventListener('fetch', (event) => {
 	);
 });
 
-const limitCacheSize = (cache, size) => {
+// Function for limiting dynamic cache size
+function limitCacheSize (cache, size) {
 	cache.keys().then(keys => {
 		if(keys.length > size){
 			cache.delete(keys[0]).then(limitCacheSize(cache, size));

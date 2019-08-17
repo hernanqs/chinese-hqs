@@ -57,11 +57,11 @@ function sortByLength(a, b) {
 // Take a search word in pinyin or hanzi
 // Return the results of the search as a list of string that are keys in hanziDict
 // or cedict
-let getHanziSearchResults = getSearchResultsFunctionFactory(hanziDict, {}, pinyinIndex,
+var getHanziSearchResults = getSearchResultsFunctionFactory(hanziDict, {}, pinyinIndex,
 	pinyinWODIndex, sortByMostCommon);  // Hanzi index is an empty object because it would
 										// have only redundant entries (entries where every
 										// hanzi points only to itself)
-let getCedictSearchResults = getSearchResultsFunctionFactory(cedict, cedictWordIndex,
+var getCedictSearchResults = getSearchResultsFunctionFactory(cedict, cedictWordIndex,
 	cedictPinyinIndex, cedictPinyinWODIndex, sortByLength);
 
 
@@ -107,14 +107,14 @@ function getEnglishSearchResultsFunctionFactory(data, idx, sortFunction) {
 }
 
 // English search results functions
-let getHanziEnglishSearchResults = getEnglishSearchResultsFunctionFactory(cedict, hanziEnglishIndex, sortByMostCommon);
-let getCedictEnglishSearchResults = getEnglishSearchResultsFunctionFactory(cedict, cedictEnglishIndex, sortByLength);
+var getHanziEnglishSearchResults = getEnglishSearchResultsFunctionFactory(cedict, hanziEnglishIndex, sortByMostCommon);
+var getCedictEnglishSearchResults = getEnglishSearchResultsFunctionFactory(cedict, cedictEnglishIndex, sortByLength);
 
 
 // Get hash Parameters and return them in an object
 function getHashParams() {
 	// Get a string containing the hash parameters 
-	var paramsString = window.location.href.split('#')[1];
+	let paramsString = window.location.href.split('#')[1];
 
 	// If there are not hash parameters, return an empty object
 	if (!paramsString) {
@@ -122,13 +122,24 @@ function getHashParams() {
 	}
 	// Split the string containg the hash parameters into
 	// key-value pairs
-	var pairs = paramsString.split('&');
+	let pairs = paramsString.split('&');
 
 	// Create an object containing the hash parameters and return it
-	var paramsObj = {};
-	for (var i = 0; i < pairs.length; i++) {
-		var pair = pairs[i].split('=');
+	let paramsObj = {};
+	for (let i = 0; i < pairs.length; i++) {
+		let pair = pairs[i].split('=');
 		paramsObj[pair[0]] = decodeURIComponent(pair[1]);
 	}
 	return paramsObj;
+}
+
+
+// Function for displaying a message to the user when an error occurs, which
+// may be because the browser does not support ES6+
+function displayErrorMessage() {
+	alert(
+		`An error has ocurred.
+It may be because your browser does not support some of the latest web technologies.
+Please try using an updated version of Firefox or Chrome.`
+	);
 }

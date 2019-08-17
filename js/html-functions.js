@@ -33,7 +33,7 @@ function makeTableFunctionFactory(name, colNames) {
 // Function for making a hanzi table, takes the body content of the table (as
 // an HTML string with tr elements) and the table name to use as caption
 // Returns the table as an HTML string
-let makeHanziTable = makeTableFunctionFactory('hanzi-table', [
+var makeHanziTable = makeTableFunctionFactory('hanzi-table', [
 		'',
 		'Simplified',
 		'Traditional',
@@ -49,7 +49,7 @@ let makeHanziTable = makeTableFunctionFactory('hanzi-table', [
 // Function for making a cedict definitions table, takes the body content of the
 // table (as an HTML string with tr elements) and the table name to use as caption
 // Returns the table as an HTML string
-let makeCedictTable = makeTableFunctionFactory('cedict-table', [
+var makeCedictTable = makeTableFunctionFactory('cedict-table', [
 		'',
 		'Simplified',
 		'Traditional',
@@ -91,35 +91,43 @@ function getTableTr(tdContents, tableName) {
 
 // Functions for making the hanzi table
 
+// Takes a hanzi object
+// Returns an arrays of strings to be used as the contents of the td elements
+// in the row (tr) corresponding to the cedict definition passed as an argument
+function getHanziTdContents(hanzi) {
+	return [
+		getWiktionaryLink(hanzi['simplified'], 'w', true),
+		getHanziLink(hanzi['simplified']),
+		hanzi['traditional']? hanzi['traditional'].map(h =>getWiktionaryLink(h)) : '--',
+		hanzi['pinyin'],
+		hanzi['otherPinyin'],
+		hanzi['mostCommonRanking'],
+		hanzi['HSKLevel'],
+		getRadicalLink(hanzi['radical']) + hanzi['radicalAndExtraStrokes'].slice(1),
+		hanzi['strokeNumber'],
+		hanzi['meaning']
+	];
+
+}
+
+// Takes a hanzi (a string)
+// Returns a string representing an HTML tr with the data of the hanzi
+function getHanziTr(hanzi) {
+	try {
+		return getTableTr(getHanziTdContents(hanziDict[hanzi]), 'hanzi-table')
+	} catch (error) {
+		console.log(error);
+		return '';
+	}
+}
+
+
 // Get table body content (the table rows) for hanzi table function
 // Takes an array of hanzi strings
 // Returns an HTML string with tr elements, each tr has the information of one of the hanzi,
 // the information is taken from hanziDict
 function getHanziTableContent(hanziArray) {
-	let tableContent = '';
-
-	for (let hanzi of hanziArray) {
-		if (hanziDict[hanzi]) {
-			hanzi = hanziDict[hanzi];
-
-			let tdContents = [
-				getWiktionaryLink(hanzi['simplified'], 'w', true),
-				getHanziLink(hanzi['simplified']),
-				hanzi['traditional']? hanzi['traditional'].map(h =>getWiktionaryLink(h)) : '--',
-				hanzi['pinyin'],
-				hanzi['otherPinyin'],
-				hanzi['mostCommonRanking'],
-				hanzi['HSKLevel'],
-				getRadicalLink(hanzi['radical']) + hanzi['radicalAndExtraStrokes'].slice(1),
-				hanzi['strokeNumber'],
-				hanzi['meaning']
-			]
-
-			tableContent += getTableTr(tdContents, 'hanzi-table');
-		}
-
-	}
-	return tableContent;
+	return hanziArray.map(getHanziTr).join('');
 }
 
 
@@ -127,13 +135,13 @@ function getHanziTableContent(hanziArray) {
 
 // Takes a definition of the cedict (an object)
 // Returns an arrays of strings to be used as the contents of the td elements
-// in the row (tr) corrsponding to the cedict definition passed as an argument
+// in the row (tr) corresponding to the cedict definition passed as an argument
 function getCedictTdContents(cedictDefinition) {
 	let simp = cedictDefinition['s'];
 	return [
 		getWiktionaryLink(simp, 'w') + ' ' +
-			getSearchLink(simp + '&search-lang=Ch', 's') + ' ' +
-			getCedictEntryLink(simp, '→'),
+		getSearchLink(simp + '&search-lang=Ch', 's') + ' ' +
+		getCedictEntryLink(simp, '→'),
 		getHanziLinksFromWord(simp),
 		cedictDefinition['t'],
 		cedictDefinition['p'],
@@ -141,19 +149,16 @@ function getCedictTdContents(cedictDefinition) {
 	];
 }
 
-// Get table body content (the table rows) for the cedict table function
-// Takes an array of strings with chinese words
-// Returns an HTML string with tr elements, each tr has the information of one cedict
-// definition corresponding to one of the chinese words
-function getCedictTableContent(wordArray) {
-	let tableContent = '';
-
-	for (let word of wordArray) {
+// Takes a chinese word/hanzi/idiom (a string)
+// Returns a string representing an HTML tr with the data of the chinese
+// word/hanzi/idiom taken from cedict
+function getCedictTr(word) {
+	try {
 		let cedictEntry = cedict[word];
 
 		// If word is not in Cedict use empty fallback values
 		if (!cedictEntry) {
-			tableContent += getTableTr([
+			return getTableTr([
 					getWiktionaryLink(word, 'w') + ' ' +
 						getSearchLink(word + '&search-lang=Ch', 's'),
 					getHanziLinksFromWord(word),
@@ -169,16 +174,24 @@ function getCedictTableContent(wordArray) {
 		else if (Array.isArray(cedictEntry)) {
 
 			for (let cedictDefinition of cedictEntry) {
-				let newTr = getTableTr(getCedictTdContents(cedictDefinition), 'cedict-table');
-				tableContent += newTr;
+				return getTableTr(getCedictTdContents(cedictDefinition), 'cedict-table');
 			}
 
 		} else {
-			let newTr = getTableTr(getCedictTdContents(cedictEntry), 'cedict-table');
-			tableContent += newTr;
+			return getTableTr(getCedictTdContents(cedictEntry), 'cedict-table');
 		}
+	} catch (error) {
+		console.log(error);
+		return '';
 	}
-	return tableContent;
+}
+
+// Get table body content (the table rows) for the cedict table function
+// Takes an array of strings with chinese words
+// Returns an HTML string with tr elements, each tr has the information of one cedict
+// definition corresponding to one of the chinese words
+function getCedictTableContent(wordArray) {
+	return wordArray.map(getCedictTr).join('');
 }
 
 // Link functions
@@ -189,13 +202,13 @@ function linkFunctionFactory(baseURL, newTab=false) {
 }
 
 // Functions for making links
-let getWiktionaryLink = linkFunctionFactory('https://en.wiktionary.org/wiki/', true);
-let getHanziLink = linkFunctionFactory('#type=hanzi&value=');
-let getRadicalLink = linkFunctionFactory('#type=radical&value=');
-let getSearchLink = linkFunctionFactory('#type=search&value=');
-let getHSKLevelLink = linkFunctionFactory('#type=hsk&value=');
-let getListLink = linkFunctionFactory('#type=list&value=');
-let getCedictEntryLink = linkFunctionFactory('#type=cedict-entry&value=');
+var getWiktionaryLink = linkFunctionFactory('https://en.wiktionary.org/wiki/', true);
+var getHanziLink = linkFunctionFactory('#type=hanzi&value=');
+var getRadicalLink = linkFunctionFactory('#type=radical&value=');
+var getSearchLink = linkFunctionFactory('#type=search&value=');
+var getHSKLevelLink = linkFunctionFactory('#type=hsk&value=');
+var getListLink = linkFunctionFactory('#type=list&value=');
+var getCedictEntryLink = linkFunctionFactory('#type=cedict-entry&value=');
 
 
 // Takes a string with a chinese word (or phrase)
@@ -308,6 +321,38 @@ function getHanziCard(hanzi, hanziDict) {
 
 // Cedict word card functions
 
+// Takes an object with the cedict definition
+// Returns an HTML string with the information of the cedict definition
+function getCedictWordDefinition(cedictDefinition) {
+	let definition = `
+			<dl class="cedict-word-data-dl">
+
+				<dt class="cedict-word-data-dt">
+					Traditional
+				</dt>
+				<dd class="cedict-word-data-dd" id="cedict-word-data-trad">
+					${
+						cedictDefinition['t'] || '--'
+					}
+				</dd>
+				<dt class="cedict-word-data-dt">
+					Pinyin
+				</dt>
+				<dd class="cedict-word-data-dd" id="cedict-word-data-pinyin">
+					${ cedictDefinition['p'] || '--'}
+				</dd>
+				<dt class="cedict-word-data-dt">
+					Meaning
+				</dt>
+				<dd class="cedict-word-data-dd" id="cedict-word-data-meaning">
+					${ cedictDefinition['e'] || '--' }
+				</dd>
+			</dl>
+	`;
+
+	return definition;
+}
+
 // Takes a chinese word (or phrase) in a string and the cedict object
 // Returns an HTML string with the card component to display the information
 // about the word present in cedict
@@ -348,38 +393,6 @@ function getCedictWordCard(word, cedict) {
 	} else {
 		return '';
 	}
-}
-
-// Takes an object with the cedict definition
-// Returns an HTML string with the information of the cedict definition
-function getCedictWordDefinition(cedictDefinition) {
-	let definition = `
-			<dl class="cedict-word-data-dl">
-
-				<dt class="cedict-word-data-dt">
-					Traditional
-				</dt>
-				<dd class="cedict-word-data-dd" id="cedict-word-data-trad">
-					${
-						cedictDefinition['t'] || '--'
-					}
-				</dd>
-				<dt class="cedict-word-data-dt">
-					Pinyin
-				</dt>
-				<dd class="cedict-word-data-dd" id="cedict-word-data-pinyin">
-					${ cedictDefinition['p'] || '--'}
-				</dd>
-				<dt class="cedict-word-data-dt">
-					Meaning
-				</dt>
-				<dd class="cedict-word-data-dd" id="cedict-word-data-meaning">
-					${ cedictDefinition['e'] || '--' }
-				</dd>
-			</dl>
-	`;
-
-	return definition;
 }
 
 

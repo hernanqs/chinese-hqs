@@ -12,4 +12,3 @@ function loadListPage(listName) {
 		lists[listName].title
 	);
 }
-
