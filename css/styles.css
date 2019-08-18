@@ -34,6 +34,7 @@ p {
 }
 
 /*Navbar styles*/
+
 .navbar {
 	display: flex;
 	justify-content: flex-end;
@@ -51,6 +52,19 @@ p {
 }
 .navbar-item {
 	margin: 2px 20px 2px 0;
+}
+.navbar-logo {
+	font-size: 23px;
+	justify-self: flex-start;
+	align-self: flex-start;
+	margin-right: auto;
+}
+.navbar-logo a {
+	color: white;
+}
+.navbar-logo a:hover {
+	color: white;
+	text-decoration: none;
 }
 .navbar-dropdown-container {
 	display: inline-block;
@@ -131,8 +145,7 @@ p {
 	width: 66px;
 	margin: 0;
 	padding: 0;
-	border: 1px solid #bbb;
-	border-radius: 3px;
+	border: none;
 	font-size: 16px;
 }
 .radio-form-field {
@@ -140,6 +153,15 @@ p {
 	width: 30px;
 	margin: 0;
 	padding: 0;
+}
+label[for=search-chinese], label[for=search-english] {
+	border: 1px solid #bbb;
+}
+label[for=search-chinese] {
+	border-radius: 3px 0 0 3px;
+}
+label[for=search-english] {
+	border-radius: 0 3px 3px 0;
 }
 .search-language-fieldset input{
 	display: none;
@@ -157,6 +179,20 @@ p {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+}
+
+/* Homepage content */
+.homepage-content {
+	width: 75%;
+	margin: auto;
+}
+.homepage-content p {
+	margin-bottom: 10px;
+}
+.homepage-h1 {
+	font-size: 40px;
+	line-height: 40px;
+	text-align: center;
 }
 
 /*Table styles*/

@@ -173,9 +173,11 @@ function getCedictTr(word) {
 		// each definition
 		else if (Array.isArray(cedictEntry)) {
 
+			let trs = '';
 			for (let cedictDefinition of cedictEntry) {
-				return getTableTr(getCedictTdContents(cedictDefinition), 'cedict-table');
+				trs += getTableTr(getCedictTdContents(cedictDefinition), 'cedict-table');
 			}
+			return trs;
 
 		} else {
 			return getTableTr(getCedictTdContents(cedictEntry), 'cedict-table');
