@@ -78,7 +78,7 @@ function handleSearchSubmit (e) {
 
 // Register service worker
 if ('serviceWorker' in navigator) {
-	navigator.serviceWorker.register('/sw.js')
+	navigator.serviceWorker.register('sw.js')
 		.then((reg) => console.log('Registration succeeded'))
 		.catch((err) => console.log('Registration failed', err));
 } else {
