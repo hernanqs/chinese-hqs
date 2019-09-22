@@ -4,7 +4,7 @@ This is a personal project I started to learn Chinese. In this site you can sear
 
 ## How to use this site
 
-You can go to [https://github.com/hernanqs/chinese-hqs](https://github.com/hernanqs/chinese-hqs), click the green "Clone or download" button on the right and click "Download as ZIP". Then go to your Downloads folder and unzip the file. Open the unzipped folder and click the file named index.html, it will open the site in your default browser and you can bookmark it as any normal webpage, but it will be in your computer, so it will be faster and you can use it offline.
+You can go to [https://github.com/hernanqs/chinese-hqs](https://github.com/hernanqs/chinese-hqs), click the green “Clone or download” button on the right and click “Download as ZIP”. Then go to your Downloads folder and unzip the file. Open the unzipped folder and click the file named index.html, it will open the site in your default browser and you can bookmark it as any normal webpage, but it will be in your computer, so it will be faster and you can use it offline.
 
 Two important notes:
 
@@ -16,34 +16,37 @@ The site is meant to be used in updated versions of Firefox or Chrome, it may no
 
 ### Search by hanzi or pinyin writing
 
-Write the hanzi or pinyin word(s) in the search box, make sure the "Ch" option on the right of the search box is selected (it is the default option) and click search.
+Write the hanzi or pinyin word(s) in the search box, make sure the “Ch” option on the right of the search box is selected (it is the default option) and click search.
 
 Chinese does not use spaces between words, so spaces will be ignored. Do not use punctuation marks.
 
-You can either write pinyin using tone marks and the umlaut, when needed, or you can write it without any kind of special mark. However, you cannot mix them, if you use at least one tone mark or umlaut all toneless syllables will be considered to have the fifth tone all "u" will be considered to be regular "u" without umlaut. This means that you can either search "lu" or "lǜ", but "lü" will not yield any results.
+You can either write pinyin using tone marks and the umlaut, when needed, or you can write it without any kind of special mark. However, you cannot mix text with diacritics and text without them, if you use at least one tone mark or umlaut all toneless syllables will be considered to have the fifth tone and all “u” will be considered to be regular “u” without umlaut. This means that you can either search “lu” or “lǜ”, but “lü” will not yield any results.
 
 ### Search by the English translation
 
-Write the English word(s) in the search box, check the "En" option on the right of the search box is selected and click search.
+Write the English word(s) in the search box, check that the “En” option on the right of the search box is selected and click search.
 
 If you want to search more than one English word you can separate them with spaces. It will yield only the results that contain all the words you searched.
 
-Do not use auxiliary words such as "the" or "a".
+Do not use auxiliary words such as “the” or “a”.
 
-You can use apostrophes (e. g. to search "o'clock"), but you cannot use other punctuation marks.
+You can use apostrophes (e. g. to search “o’clock”), but you cannot use other punctuation marks.
 
 ### Search by radical or HSK level
 
-You can use the Radicals dropdown menu to see the hanzi grouped by their Kangxi radical. Radicals are ordered by the stroke order of their traditional form, this means that both "言" and "讠" are among the 7 strokes radicals, because "讠" is the simplified for of "言".
+You can use the Radicals dropdown menu to see the hanzi grouped by their Kangxi radical. Radicals are ordered by the stroke order of their traditional form, this means that both “言” and “讠” are among the 7 strokes radicals, because “讠” is the simplified for of “言”.
 
-You use the Radicals dropdown menu to see the hanzi or words grouped by their level in the HSK test.
+You can use the HSK dropdown menu to see the hanzi or words grouped by their level in the HSK tests.
+
+## Update this site's data
+
+If you have Python installed in your computer you can run the files used to extract and format the data in this site. You may want to do this to check if there is are new stroke order images in Wikimedia (this does not happen very often) or to update the version of Cedict used. To update Cedict you have to go to [https://cc-cedict.org/editor/editor.php?handler=Download](https://cc-cedict.org/editor/editor.php?handler=Download), dowload the Cedict ZIP file extract it in the folder _python/data/src_ (make sure the extracted file is called _cedict_ts.u8_) and run the file _update_data_and_indices.py_ in the _python_ folder. To check for the new stroke order image you only have to run the file _download_wikimedia_stroke_orders.py_ in the _python_ folder.
 
 ## Data sources and licenses
 
-The list and data of the 3000 most common hanzi was taken from this spreadsheet [https://docs.google.com/spreadsheets/d/1j5-67vdCUeAuIzmikeCgNmXaFZTuXtT4vesjnrqSOjI/edit#gid=512136205](https://docs.google.com/spreadsheets/d/1j5-67vdCUeAuIzmikeCgNmXaFZTuXtT4vesjnrqSOjI/edit#gid=512136205). The order was taken from Jun Da's Modern Chinese Character Frequency List. More information can be found in
- [https://ankiweb.net/shared/info/39888802](https://ankiweb.net/shared/info/39888802).
+The list and data of the 3000 most common hanzi was taken from this spreadsheet [https://docs.google.com/spreadsheets/d/1j5-67vdCUeAuIzmikeCgNmXaFZTuXtT4vesjnrqSOjI/edit#gid=512136205](https://docs.google.com/spreadsheets/d/1j5-67vdCUeAuIzmikeCgNmXaFZTuXtT4vesjnrqSOjI/edit#gid=512136205). The order was taken from Jun Da's Modern Chinese Character Frequency List. More information can be found in [https://ankiweb.net/shared/info/39888802](https://ankiweb.net/shared/info/39888802).
 
-The stroke order images were taken from the Wikimedia Commons Stroke Order Project published under a GNU-Creative Commons 3.0 License. More information can be found in [http://commons.wikimedia.org/wiki/Commons:Stroke_Order_Project](https://commons.wikimedia.org/wiki/Commons:Stroke_Order_Project). Visit https://commons.wikimedia.org/wiki/File: _INSERTYOURHANZIHERE_-bw.png to see the author of an individual image, most were made by user [M4RC0](https://commons.wikimedia.org/wiki/User:M4RC0).
+The stroke order images were taken from the Wikimedia Commons Stroke Order Project published under a GNU-Creative Commons 3.0 License. More information can be found in [http://commons.wikimedia.org/wiki/Commons:Stroke_Order_Project](https://commons.wikimedia.org/wiki/Commons:Stroke_Order_Project). Visit https://commons.wikimedia.org/wiki/File:_INSERTYOURHANZIHERE_-bw.png to see the author of an individual image, most were made by user [M4RC0](https://commons.wikimedia.org/wiki/User:M4RC0).
 
 The Cedict data was taken from the CC-CEDICT project published under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/). More information can be found in [https://cc-cedict.org/editor/editor.php](https://cc-cedict.org/editor/editor.php).
 

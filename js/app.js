@@ -10,13 +10,14 @@ function hashRedirected() {
 			'hsk': loadHSKPage,
 			'list': loadListPage,
 			'cedict-entry': loadCedictEntryPage,
+			'home': loadHomepage
 		};
 		
 		// Scroll to top of the page
 		window.scrollTo(0, 0);
 
 		if (location.hash) {
-				// Get requested type and value from location
+			// Get requested page type and value from location
 			let hashParams = getHashParams();
 			let type = hashParams['type'];
 			let value = hashParams['value'];
@@ -24,7 +25,12 @@ function hashRedirected() {
 			// Go to the requested page
 			let loadPage = pageTypeToLoadFunctionMap[type];
 			loadPage(value);
+
+			// Update page title
+			let titleEl = document.getElementById('title');
+			titleEl.textContent = value ? 'Chinese HQS | ' + value : 'Chinese HQS';
 		}
+
 	} catch (error) {
 		console.log(error);
 		displayErrorMessage();

@@ -1,4 +1,4 @@
-const staticCacheName = 'static-cache';
+const staticCacheName = 'static-cache-v1.1';
 const dynamicCacheName = 'dynamic-cache';
 const dynamicCacheLimit = 20;
 
@@ -13,6 +13,7 @@ const staticCacheAssests = [
 	'js/hsk-page.js',
 	'js/list-page.js',
 	'js/cedict-entry-page.js',
+	'js/homepage.js',
 	'js/app.js',
 	'data/hanzi.js',
 	'data/cedict.js',
