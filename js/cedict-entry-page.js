@@ -1,29 +1,28 @@
 'use strict';
-function loadCedictEntryPage(cedictEntry) {
+function loadCedictEntryPage(cedictKey) {
 
 	let mainSection = document.getElementById('main-section');
 
 	// Clear main section content
 	mainSection.innerHTML = '';
 
-
 	// Add Cedict word card
-	if (cedict[cedictEntry]) {
-		mainSection.innerHTML += getCedictWordCard(cedictEntry, cedict);
+	if (cedictData.has(cedictKey)) {
+		mainSection.innerHTML += cedictGui.getCard(cedictData.getEntries(cedictKey));
 	}
 
 	// Get the hanzi that appear in the Cedict entry
-	let hanziInEntry = cedictEntry.split('');
+	let hanziInKey = cedictKey.split('').filter(isHanzi);
 	// Get the words that appear in the Cedict entry
-	let wordsInEntry = [];
+	let wordsInKey = [];
 	// Search the entries of the hanzi in the cedict index, in order to get all words (Cedict
 	// entries) that appear inside the Cedict entry
-	for (let hanzi of hanziInEntry) {
-		if (cedictWordIndex[hanzi]) {
-			for (let entryInIndex of cedictWordIndex[hanzi]) {
-				if (cedictEntry.includes(entryInIndex)) {
-					if (!wordsInEntry.includes(entryInIndex) && entryInIndex !== cedictEntry) {
-						wordsInEntry.push(entryInIndex);
+	for (let hanzi of hanziInKey) {
+		if (cedictData.has(hanzi)) {
+			for (let entryInIndex of cedictData.getKeysFromSearchChinese(hanzi)) {
+				if (cedictKey.includes(entryInIndex)) {
+					if (!wordsInKey.includes(entryInIndex) && entryInIndex !== cedictKey) {
+						wordsInKey.push(entryInIndex);
 					}
 				}
 			}
@@ -31,21 +30,19 @@ function loadCedictEntryPage(cedictEntry) {
 	}
 
 	// Add table whith the hanzi that appear in the Cedict entry
-	if (hanziInEntry.length > 0) {
-		mainSection.innerHTML += makeHanziTable(
-			getHanziTableContent(hanziInEntry),
+	if (hanziInKey.length > 0) {
+		mainSection.innerHTML += hanziGui.getEntriesDisplay(
+			hanziData.getEntries(hanziInKey),
 			'Hanzi in the Cedict entry'
 			);
-
 	}
 
 	// Add table whith the words that appear in the Cedict entry
-	if (wordsInEntry.length > 0) {
-		mainSection.innerHTML += makeCedictTable(
-			getCedictTableContent(wordsInEntry),
+	if (wordsInKey.length > 0) {
+		mainSection.innerHTML += cedictGui.getEntriesDisplay(
+			cedictData.getEntries(wordsInKey),
 			'Words in the Cedict entry'
 		);
 	}
-
 	
 }

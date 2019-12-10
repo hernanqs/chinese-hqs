@@ -46,10 +46,10 @@ window.onhashchange = hashRedirected;
 
 // Fill navbar dropdowns
 var radicalsDropdownDiv = document.getElementById('radicals-dropdown-container');
-radicalsDropdownDiv.innerHTML += getRadicalsDropdown();
+radicalsDropdownDiv.innerHTML += navbarGui.getRadicalsDropdown();
 
 var HSKLevelsDropdownDiv = document.getElementById('hsk-levels-dropdown-container');
-HSKLevelsDropdownDiv.innerHTML += getHSKLevelsDropdown();
+HSKLevelsDropdownDiv.innerHTML += navbarGui.getHSKLevelsDropdown();
 
 
 // Search function
@@ -74,7 +74,6 @@ function handleSearchSubmit (e) {
 		let searchLanguage = searchEnglishInput.checked? 'En' : 'Ch';
 		
 		// Redirect to the search results page for the searched terms
-		// window.location.href = '#search/' + searchText + '?search-lang=' + searchLanguage;
 		window.location.href = '#type=search&value=' + searchText + '&search-lang=' + searchLanguage;
 	} catch (error) {
 		console.log(error);

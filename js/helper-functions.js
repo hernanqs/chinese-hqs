@@ -1,115 +1,4 @@
 'use strict';
-// Search results function factory
-function getSearchResultsFunctionFactory(data, hanziIdx, pinyinIdx, pinyinWODIdx, sortFunction) {
-	return function (searchText) {
-		let diacriticsRegExp = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/i;
-
-		let searchTextLower = searchText.toLowerCase().replace(/\s/g, '');
-
-		let searchResults = []
-
-		// Check if search word is hanzi
-		if (hanziIdx[searchText]) {
-			searchResults = hanziIdx[searchText];
-		}
-		// Check if search word is hanzi and had a redundant entry in the index (an entry whose
-		// only listed word was the entry key itself), in this case the entry was removed from
-		// the index (to reduce index size) and we have to check directly in the data
-		else if (data[searchText]) {
-			searchResults = [ data[searchText]['simplified'] || data[searchText]['s'] ];
-		}
-		// Check if search word is pinyin with tone marks
-		else if (diacriticsRegExp.test(searchText) && pinyinIdx[searchTextLower]) {
-			searchResults = pinyinIdx[searchTextLower];
-		}
-		// Check if search word is pinyin without tone marks
-		else if (pinyinWODIdx[searchTextLower]) {
-			// Join results from every pinyin with tones (in pinyinIdx) for the
-			// pinyin without tone marks
-			searchResults = pinyinWODIdx[searchTextLower].reduce(
-				(acc, curr) => {
-					return acc.concat(pinyinIdx[curr])
-				}, []);
-			// Avoid duplicate results when a hanzi in most common hanzi has more
-			// than one pinyin or when a cedict word has two syllables with the
-			// same pinyin
-			searchResults = [... new Set(searchResults)];
-
-			// Sort results
-			searchResults.sort(sortFunction);
-		}
-
-		return searchResults;
-	}
-
-}
-
-// Functions to sort search results, hanzi results will be sort from most common to least
-// common hanzi, cedict entries will be sort from shorter words to longer words (or phrases)
-function sortByMostCommon(a, b) {
-	return hanziDict[a]['mostCommonRanking'] - hanziDict[b]['mostCommonRanking'];
-}
-function sortByLength(a, b) {
-	return a.length - b.length;
-}
-
-// Search results functions
-// Take a search word in pinyin or hanzi
-// Return the results of the search as a list of string that are keys in hanziDict
-// or cedict
-var getHanziSearchResults = getSearchResultsFunctionFactory(hanziDict, {}, pinyinIndex,
-	pinyinWODIndex, sortByMostCommon);  // Hanzi index is an empty object because it would
-										// have only redundant entries (entries where every
-										// hanzi points only to itself)
-var getCedictSearchResults = getSearchResultsFunctionFactory(cedict, cedictWordIndex,
-	cedictPinyinIndex, cedictPinyinWODIndex, sortByLength);
-
-
-// Function factory to make the english search results functions
-function getEnglishSearchResultsFunctionFactory(data, idx, sortFunction) {
-	return function (searchText) {
-		let searchTextLower = searchText.toLowerCase();
-
-		let searchResults = []
-
-		// If there is more than one word in the text to search
-		if (/\s/.test(searchText)) {
-			// Split text into the different words
-			let searchWords = searchText.split(' ');
-			let resultsPerWord = [];
-			// Get search results for every individual word
-			for (word of searchWords) {
-				// Check if search word is in index
-				if (idx[word]) {
-					resultsPerWord.push(idx[word]);
-				} else {
-					resultsPerWord.push([]);
-				}
-			}
-			// The search results will be the intersection of the results of the 
-			// individual words (the entries were all words appear)
-			searchResults = resultsPerWord.reduce((acc, cur) => {
-				return acc.filter(el => cur.includes(el));
-			});
-		}
-		// Else if search text is a single word, check if search word is in index
-		else {
-			if (idx[searchTextLower]) {
-				searchResults = idx[searchTextLower];
-			}
-		}
-
-		// Sort results
-		searchResults.sort(sortFunction);
-
-		return searchResults;
-	}
-}
-
-// English search results functions
-var getHanziEnglishSearchResults = getEnglishSearchResultsFunctionFactory(cedict, hanziEnglishIndex, sortByMostCommon);
-var getCedictEnglishSearchResults = getEnglishSearchResultsFunctionFactory(cedict, cedictEnglishIndex, sortByLength);
-
 
 // Get hash Parameters and return them in an object
 function getHashParams() {
@@ -142,4 +31,46 @@ function displayErrorMessage() {
 It may be because your browser does not support some of the latest web technologies.
 Please try using an updated version of Firefox or Chrome.`
 	);
+}
+
+
+class Link {
+    constructor(baseURL, newTab=false) {
+        this.baseURL = baseURL;
+        this.newTab = newTab;
+    }
+    get(path, text='') {
+        return `<a href="${ this.baseURL + path }"${ (this.newTab? ' target="_blank"' : '') }>${ text || path }</a>`;
+    }
+}
+
+var wiktionaryLink = new Link('https://en.wiktionary.org/wiki/', true);
+var hanziLink = new Link('#type=hanzi&value=');
+var radicalLink = new Link('#type=radical&value=');
+var searchLink = new Link('#type=search&value=');
+var hskLevelLink = new Link('#type=hsk&value=');
+var listLink = new Link('#type=list&value=');
+var cedictEntryLink = new Link('#type=cedict-entry&value=');
+
+// Takes a character in a string.
+// Returns true if the character is a hanzi, else returns false.
+function isHanzi(char) {
+	return !/[a-zA-Z0-9\s,，.:·]/.test(char);
+}
+
+// Takes a string with a chinese word (or phrase)
+// Returns a string with all hanzi characters converted in links (anchor HTML elements) to
+// the search results page for that hanzi
+function getHanziLinksFromWord(word) {
+	let result = '';
+	for (let char of word) {
+		// If character is a hanzi add link to search results page for that
+		// hanzi, else add character
+		if (isHanzi(char)) {
+			result += hanziLink.get(char);
+		} else {
+			result += char;
+		}
+	}
+	return result;
 }

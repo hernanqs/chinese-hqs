@@ -7,8 +7,8 @@ function loadRadicalPage(radical) {
 	mainSection.innerHTML = '';
 
 	// Display table with hanzi where the radical appears
-	mainSection.innerHTML += makeHanziTable(
-		getHanziTableContent(radicalIndex[radical]),
+	mainSection.innerHTML += hanziGui.getEntriesDisplay(
+		hanziData.getEntries(radicalIndex[radical]),
 		radicalIndex[radical].length + ' hanzi have this radical'
 		);
 

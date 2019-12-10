@@ -6,9 +6,8 @@ function loadListPage(listName) {
 	// Clear main section content
 	mainSection.innerHTML = '';
 
-	// Display table with the list
-	mainSection.innerHTML += makeCedictTable(
-		getCedictTableContent(lists[listName].items),
+	mainSection.innerHTML += cedictGui.getEntriesDisplay(
+		cedictData.getEntries(lists[listName].items),
 		lists[listName].title
 	);
 }

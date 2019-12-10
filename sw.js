@@ -1,4 +1,4 @@
-const staticCacheName = 'static-cache-v1.1';
+const staticCacheName = 'static-cache-v2.0';
 const dynamicCacheName = 'dynamic-cache';
 const dynamicCacheLimit = 20;
 
@@ -6,7 +6,8 @@ const staticCacheAssests = [
 	'index.html',
 	'css/styles.css',
 	'js/helper-functions.js',
-	'js/html-functions.js',
+	'js/data-api.js',
+	'js/gui-api.js',
 	'js/search-results-page.js',
 	'js/hanzi-page.js',
 	'js/radical-page.js',

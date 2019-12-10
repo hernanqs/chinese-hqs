@@ -20,13 +20,12 @@ function loadHSKPage(hskLevel) {
 
 	hskLevel = levelsMap[hskLevel];
 
-	// Display table with hanzi where the radical appears
-	mainSection.innerHTML += makeHanziTable(
-		getHanziTableContent(HSKLevelIndex[hskLevel]),
+	mainSection.innerHTML += hanziGui.getEntriesDisplay(
+		hanziData.getEntries(HSKLevelIndex[hskLevel]),
 		typeof hskLevel == 'number' ?
 			`${ HSKLevelIndex[hskLevel].length } of 3000 most common hanzi are in HSK level ${ hskLevel }`
 			: `${ HSKLevelIndex[hskLevel].length } of 3000 most common hanzi that are not in HSK`
 		);
-
+	
 }
 

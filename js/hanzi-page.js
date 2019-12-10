@@ -8,12 +8,12 @@ function loadHanziPage(hanzi) {
 
 
 	// Add hanzi card
-	if (hanziDict[hanzi]) {
-		mainSection.innerHTML += getHanziCard(hanzi, hanziDict);
+	if (hanziData.has(hanzi)) {
+		mainSection.innerHTML += hanziGui.getCard(hanziData.getEntries(hanzi));
 	}
 	// If hanzi is not in 3000 most common hanzi use cedict data instead
-	else if (cedict[hanzi]) {
-		mainSection.innerHTML += getCedictWordCard(hanzi, cedict);
+	else if (cedictData.has(hanzi)) {
+		mainSection.innerHTML += cedictGui.getCard(cedictData.getEntries(hanzi));
 	}
 
 
@@ -43,20 +43,16 @@ function loadHanziPage(hanzi) {
 	}
 
 
-	// Get Cedict entries where the hanzi appears
-	let cedictEntries = cedictWordIndex[hanzi];
-	// If only one Cedict entry for the hanzi exist it would not be in the index
-	// (because it would be a redundant entry)
-	if (!cedictEntries && cedict[hanzi]) {
-		cedictEntries = [hanzi]
-	}
+	let cedictEntries = cedictData.searchChinese(hanzi);
+
 	// Add table whith Cedict entries where the hanzi appears
-	if (cedictEntries) {
-		mainSection.innerHTML += makeCedictTable(
-			getCedictTableContent(cedictWordIndex[hanzi] || [hanzi]),
+	if (cedictEntries.length > 0) {
+		mainSection.innerHTML += cedictGui.getEntriesDisplay(
+			cedictEntries,
 			'Cedict entries where the hanzi appears'
 		);
 	}
+
 	// If there is no entry in Cedict for the requested hanzi
 	else {
 		mainSection.innerHTML += `<div><p>This hanzi does not appears in Cedict</p></div>`

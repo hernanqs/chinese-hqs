@@ -18,8 +18,8 @@ def json_to_js(input_file, output_file, variable_name):
 	# Create the JS file and store the data in varible in it
 	os.makedirs(os.path.dirname(os.path.abspath(output_file)), exist_ok=True)
 	with open(output_file, 'w', encoding='utf8') as outfile:
-	    output = variable_name + ' = ' + json.dumps(data, separators=(',',':'), indent=None, ensure_ascii=False) + ';\n'
-	    outfile.write(output)
+		output = variable_name + ' = ' + json.dumps(data, separators=(',',':'), indent=None, ensure_ascii=False) + ';\n'
+		outfile.write(output)
 
 	print('Converted', input_file, 'into a JS file')
 	print()
