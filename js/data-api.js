@@ -57,7 +57,7 @@ class DataAPI {
     // Returns the results of the search as an array of strings that are keys to
     // access the matched data entries.
     getKeysFromSearchEnglish(searchText) {
-		let searchTextLower = searchText.toLowerCase();
+		searchText = searchText.toLowerCase();
 
 		let searchResults = []
 
@@ -67,7 +67,7 @@ class DataAPI {
 			let searchWords = searchText.split(' ');
 			let resultsPerWord = [];
 			// Get search results for every individual word
-			for (word of searchWords) {
+			for (let word of searchWords) {
 				// Check if search word is in index
 				if (this.englishIdx[word]) {
 					resultsPerWord.push(this.englishIdx[word]);
@@ -83,8 +83,8 @@ class DataAPI {
 		}
 		// Else if search text is a single word, check if search word is in index
 		else {
-			if (this.englishIdx[searchTextLower]) {
-				searchResults = this.englishIdx[searchTextLower];
+			if (this.englishIdx[searchText]) {
+				searchResults = this.englishIdx[searchText];
 			}
 		}
 
@@ -104,7 +104,8 @@ class DataAPI {
     }
 
     // Takes a string to be used as a key to access one or more data entries.
-    // Returns the matched data entries in an array.
+	// Returns the matched data entries in an array. If no data entry matches
+	// returs an array with an entry filled with default empty values.
     getEntriesFromOneKey(key) {
         let entries = [];
         if (!this.data[key]) {
