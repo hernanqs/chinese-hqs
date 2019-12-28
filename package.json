@@ -1,6 +1,6 @@
 {
   "name": "chinese-hqs",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "This is a personal project I started to learn Chinese. In this site you can search Chinese words or hanzi by their pinyin writing, hanzi writing or English translation, you can see their English translation and the stroke order of the hanzi. You can also search hanzi by their radical and search Chinese words or hanzi by their HSK level.",
   "main": "index.html",
   "scripts": {

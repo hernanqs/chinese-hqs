@@ -437,8 +437,3 @@ class NavbarGuiAPI {
             `
     }
 }
-
-
-var hanziGui = new HanziGuiAPI();
-var cedictGui = new CedictGuiAPI();
-var navbarGui = new NavbarGuiAPI();

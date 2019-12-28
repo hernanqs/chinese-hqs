@@ -220,7 +220,3 @@ class CedictDataAPI extends DataAPI {
         }
     }
 }
-
-
-var hanziData = new HanziDataAPI();
-var cedictData = new CedictDataAPI();

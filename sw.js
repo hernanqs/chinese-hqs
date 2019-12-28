@@ -1,4 +1,4 @@
-const staticCacheName = 'static-cache-v2.0.1';
+const staticCacheName = 'static-cache-v2.0.2';
 const dynamicCacheName = 'dynamic-cache';
 const dynamicCacheLimit = 20;
 
@@ -8,6 +8,7 @@ const staticCacheAssests = [
 	'js/helper-functions.js',
 	'js/data-api.js',
 	'js/gui-api.js',
+	'js/initialize-apis.js',
 	'js/search-results-page.js',
 	'js/hanzi-page.js',
 	'js/radical-page.js',
@@ -18,7 +19,6 @@ const staticCacheAssests = [
 	'js/app.js',
 	'data/hanzi.js',
 	'data/cedict.js',
-	'indices/hanziIndex.js',
 	'indices/pinyinIndex.js',
 	'indices/pinyinWODIndex.js',
 	'indices/cedictWordIndex.js',
