@@ -1,6 +1,6 @@
 {
   "name": "chinese-hqs",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "This is a personal project I started to learn Chinese. In this site you can search Chinese words or hanzi by their pinyin writing, hanzi writing or English translation, you can see their English translation and the stroke order of the hanzi. You can also search hanzi by their radical and search Chinese words or hanzi by their HSK level.",
   "main": "index.html",
   "scripts": {
@@ -18,6 +18,8 @@
   "homepage": "https://github.com/hernanqs/chinese-hqs#readme",
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-html": "^1.3.0",
     "mocha": "^6.2.2"
-  }
+  },
+  "dependencies": {}
 }

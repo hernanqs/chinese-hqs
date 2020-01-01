@@ -1,19 +1,19 @@
-from toggle_exports import *
+from toggle_exports import has_exports, add_exports, remove_exports
 __exports_list__ = [
 
 	('../data/hanzi.js', 'hanziDict'),
 	('../indices/hanziEnglishIndex.js', 'hanziEnglishIndex'),
-	('../indices/hanziIndex.js', 'hanziIndex'),
 	('../indices/pinyinIndex.js', 'pinyinIndex'),
 	('../indices/pinyinWODIndex.js', 'pinyinWODIndex'),
-
-	('../js/data-api.js', ['HanziDataAPI', 'CedictDataAPI']),
 
 	('../data/cedict.js', 'cedict'),
 	('../indices/cedictEnglishIndex.js', 'cedictEnglishIndex'),
 	('../indices/cedictPinyinIndex.js', 'cedictPinyinIndex'),
 	('../indices/cedictPinyinWODIndex.js', 'cedictPinyinWODIndex'),
 	('../indices/cedictWordIndex.js', 'cedictWordIndex'),
+
+	('../js/data-api.js', ['HanziDataAPI', 'CedictDataAPI']),
+	('../js/gui-api.js', ['HanziGuiAPI', 'CedictGuiAPI']),
 
 ]
 

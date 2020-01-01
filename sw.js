@@ -1,4 +1,4 @@
-const staticCacheName = 'static-cache-v2.0.2';
+const staticCacheName = 'static-cache-v2.0.3';
 const dynamicCacheName = 'dynamic-cache';
 const dynamicCacheLimit = 20;
 

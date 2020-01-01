@@ -3,7 +3,6 @@
 var { expect } = require('chai');
 
 var { hanziDict } = require('../data/hanzi.js');
-var { hanziIndex } = require('../indices/hanziIndex.js');
 var { pinyinIndex } = require('../indices/pinyinIndex.js');
 var { pinyinWODIndex } = require('../indices/pinyinWODIndex.js');
 var { hanziEnglishIndex } = require('../indices/hanziEnglishIndex.js');
@@ -255,5 +254,3 @@ describe('#Data API', function () {
 
 	});
 });
-
-

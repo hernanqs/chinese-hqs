@@ -1,8 +1,8 @@
 #! python3
 
-import re, io
+import re
 
-__export_format_1__ = re.compile('^exports\..+ = .+;$')
+__export_format_1__ = re.compile(r'^exports\..+ = .+;$')
 __export_format_2__ = re.compile('^exports = {.+};$')
 
 def has_exports(input_address):
