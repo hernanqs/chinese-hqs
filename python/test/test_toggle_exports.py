@@ -38,6 +38,22 @@ class Test_toggle_exports(unittest.TestCase):
 
 
 	def test_add_exports(self):
+		# Export format 1:
+		input_address = '__test_file_for_toggle_exports_unit_test.py'
+		with open(input_address, 'w', encoding='utf-8') as file:
+			file.write('First line.\nSecond line.\n')
+
+		toggle_exports.add_exports(input_address, 'pinyinWODIndex', format=1)
+
+		with open(input_address, 'r', encoding='utf-8') as file:
+			file_content = file.read()
+
+		self.assertIn('First line.\nSecond line.\n', file_content)
+		self.assertIn('exports.pinyinWODIndex = pinyinWODIndex;', file_content)
+
+		os.remove(input_address)
+
+		# Export format 2:
 		input_address = '__test_file_for_toggle_exports_unit_test.py'
 		with open(input_address, 'w', encoding='utf-8') as file:
 			file.write('First line.\nSecond line.\n')
@@ -48,7 +64,7 @@ class Test_toggle_exports(unittest.TestCase):
 			file_content = file.read()
 
 		self.assertIn('First line.\nSecond line.\n', file_content)
-		self.assertIn('exports.pinyinWODIndex = pinyinWODIndex;', file_content)
+		self.assertIn('module.exports = { pinyinWODIndex };', file_content)
 
 		os.remove(input_address)
 

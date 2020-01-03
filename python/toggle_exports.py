@@ -2,8 +2,8 @@
 
 import re
 
-__export_format_1__ = re.compile(r'^exports\..+ = .+;$')
-__export_format_2__ = re.compile('^exports = {.+};$')
+__export_format_1__ = re.compile(r'^(module.)?exports\..+ = .+;$')
+__export_format_2__ = re.compile('^(module.)?exports = {.+};$')
 
 def has_exports(input_address):
 	"""	Takes the path to a JavaScript file.
@@ -16,14 +16,17 @@ def has_exports(input_address):
 				return True
 		return False
 
-def add_exports(input_address, export_name):
+def add_exports(input_address, export_name, format=2):
 	"""	Takes the path to a JavaScript file and the name of the
 	variable to be exported.
 	Appends a line of code that exports the variable in the end
 	of the file.
 	"""
 	with open(input_address, 'a', encoding='utf-8') as input:
-		input.write(f'\nexports.{export_name} = {export_name};\n')
+		if format == 1:
+			input.write(f'\nexports.{export_name} = {export_name};\n')
+		else:
+			input.write(f'\nmodule.exports = {{ {export_name} }};\n')
 
 def remove_exports(input_address, extra_bytes=3):
 	r"""Takes the path to a JavaScript file and a number of

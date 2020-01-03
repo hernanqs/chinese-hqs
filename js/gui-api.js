@@ -418,12 +418,12 @@ class NavbarGuiAPI {
         // // Map the URL way of referring to the level with the text that would be
         // // displayed to the user
         let levelsURLToTextMap = {
-            'HSK1List': 'Level 1',
-            'HSK2List': 'Level 2',
-            'HSK3List': 'Level 3',
-            'HSK4List': 'Level 4',
-            'HSK5List': 'Level 5',
-            'HSK6List': 'Level 6',
+            'hsk-1': 'Level 1',
+            'hsk-2': 'Level 2',
+            'hsk-3': 'Level 3',
+            'hsk-4': 'Level 4',
+            'hsk-5': 'Level 5',
+            'hsk-6': 'Level 6',
         };
 
         HSKLevelsUl += '<ul class="navbar-ul">';

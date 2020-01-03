@@ -231,16 +231,13 @@
 		<script src="indices/radicalIndex.js"></script>
 		<script src="indices/HSKLevelIndex.js"></script>
 
-		<!-- Load HSK lists (as properties of the lists object) -->
+		<!-- Load HSK list (as a property of the lists object) -->
+		<script src="lists/hskList.js"></script>
 		<script>
-			let lists = {};
+			let lists = {
+				hskList: hskList
+			};
 		</script>
-		<script src="lists/HSK1List.js"></script>
-		<script src="lists/HSK2List.js"></script>
-		<script src="lists/HSK3List.js"></script>
-		<script src="lists/HSK4List.js"></script>
-		<script src="lists/HSK5List.js"></script>
-		<script src="lists/HSK6List.js"></script>
 
 		<!-- Load scripts -->
 		<script src="js/helper-functions.js"></script>

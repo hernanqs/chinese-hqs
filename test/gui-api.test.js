@@ -6,7 +6,7 @@ use(require('chai-html'))
 var { HanziGuiAPI, CedictGuiAPI } = require('../js/gui-api.js');
 
 
-describe.only('#GUI API', function () {
+describe('#GUI API', function () {
 	
 	describe('#Hanzi GUI API', function () {
 

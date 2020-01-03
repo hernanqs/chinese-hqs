@@ -42,9 +42,4 @@ if __name__ == '__main__':
 	json_to_js(os.path.join('indices', 'cedictPinyinWODIndex.json'), os.path.join('..', 'indices', 'cedictPinyinWODIndex.js'), 'cedictPinyinWODIndex')
 	json_to_js(os.path.join('indices', 'cedictEnglishIndex.json'), os.path.join('..', 'indices', 'cedictEnglishIndex.js'), 'cedictEnglishIndex')
 
-	json_to_js(os.path.join('data', 'lists', 'HSK1List.json'), os.path.join('..', 'lists', 'HSK1List.js'), 'lists.HSK1List')
-	json_to_js(os.path.join('data', 'lists', 'HSK2List.json'), os.path.join('..', 'lists', 'HSK2List.js'), 'lists.HSK2List')
-	json_to_js(os.path.join('data', 'lists', 'HSK3List.json'), os.path.join('..', 'lists', 'HSK3List.js'), 'lists.HSK3List')
-	json_to_js(os.path.join('data', 'lists', 'HSK4List.json'), os.path.join('..', 'lists', 'HSK4List.js'), 'lists.HSK4List')
-	json_to_js(os.path.join('data', 'lists', 'HSK5List.json'), os.path.join('..', 'lists', 'HSK5List.js'), 'lists.HSK5List')
-	json_to_js(os.path.join('data', 'lists', 'HSK6List.json'), os.path.join('..', 'lists', 'HSK6List.js'), 'lists.HSK6List')
+	json_to_js(os.path.join('data', 'lists', 'hskList.json'), os.path.join('..', 'lists', 'hskList.js'), 'hskList')

@@ -1,37 +1,68 @@
 #! python3
 
-import csv, json, os
+import csv, os
+from list_class import List
 
-def make_hsk_list(infile_path, outfile_path, list_title, list_type = 'cedict'):
-
-	print('Creating', list_title, 'list...')
-
-	hsk_list = {}
-	hsk_list['title'] = list_title
-	hsk_list['type'] = list_type
+def get_sublist(infile_path, list_metadata, list_col_to_field_map):
+	print('Creating', list_metadata['id'], 'list...')
 
 	# Read list of HSK level words
 	with open(infile_path, 'r', encoding='utf-8-sig') as file:
 		csv_reader = csv.reader(file, delimiter='\t')
-		hsk_list['items'] = []
+		list_content = []
 		# Add only the simplified hanzi to the list
 		for row in csv_reader:
-			hsk_list['items'].append(row[0])
+			row_data = {}
+			for idx, field in list_col_to_field_map:
+				row_data[field] = row[idx]
+			list_content.append(row_data)
 
-	# Write the list in the output file
-	os.makedirs(os.path.dirname(os.path.abspath(outfile_path)), exist_ok=True)
-	with open(outfile_path, 'w', encoding='utf8') as outfile:
-	    outfile.write(json.dumps(hsk_list, separators=(',',':'), indent=None, ensure_ascii=False))
+	return List(list_metadata, list_content).get_data()
 
-	print('Created', list_title, 'list', 'with', str(len(hsk_list['items'])), 'items')
-	print()
 
+def get_hsk_sublist(hsk_level):
+	list_col_to_field_map = [
+			(0, 's'),
+			(1, 't'),
+			(3, 'p'),
+			(4, 'e'),
+		]
+
+	return get_sublist(
+			os.path.join('data', 'src', f'HSK {hsk_level} freq.txt'),
+			{
+				'id': f'hsk-{hsk_level}',
+				'name': f'HSK {hsk_level}',
+				'hasOwnData': True,
+				'fieldNames': [
+					'Simplified',
+					'Traditional',
+					'Pinyin',
+					'Meaning'
+				],
+				'fieldKeys': ['s', 't', 'p', 'e'],
+				'fieldTypes': ['simpHanzi', 'tradHanzi', 'pinyin', 'english']
+
+			},
+			list_col_to_field_map
+		)
+
+def make_hsk_list():
+	new_list = List({
+		'id': 'hsk',
+		'name': 'HSK',
+		'hasOwnData': True,
+		'hasSublists': True
+		},
+		[
+			get_hsk_sublist(1),
+			get_hsk_sublist(2),
+			get_hsk_sublist(3),
+			get_hsk_sublist(4),
+			get_hsk_sublist(5),
+			get_hsk_sublist(6),
+		])
+	return new_list
 
 if __name__ == '__main__':
-
-	make_hsk_list(os.path.join('data', 'src', 'HSK 1 freq.txt'), os.path.join('data', 'lists', 'HSK1List.json'), 'HSK 1')
-	make_hsk_list(os.path.join('data', 'src', 'HSK 2 freq.txt'), os.path.join('data', 'lists', 'HSK2List.json'), 'HSK 2')
-	make_hsk_list(os.path.join('data', 'src', 'HSK 3 freq.txt'), os.path.join('data', 'lists', 'HSK3List.json'), 'HSK 3')
-	make_hsk_list(os.path.join('data', 'src', 'HSK 4 freq.txt'), os.path.join('data', 'lists', 'HSK4List.json'), 'HSK 4')
-	make_hsk_list(os.path.join('data', 'src', 'HSK 5 freq.txt'), os.path.join('data', 'lists', 'HSK5List.json'), 'HSK 5')
-	make_hsk_list(os.path.join('data', 'src', 'HSK 6 freq.txt'), os.path.join('data', 'lists', 'HSK6List.json'), 'HSK 6')
+	make_hsk_list().write(os.path.join('data', 'lists', 'hskList.json'))

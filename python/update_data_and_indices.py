@@ -54,12 +54,7 @@ make_cedict_pinyin_and_pinyin_wod_indices(cedict_list, 'indices')
 make_cedict_english_index(cedict_list, os.path.join('indices', 'cedictEnglishIndex.json'))
 
 # Create HSK levels lists
-make_hsk_list(os.path.join('data', 'src', 'HSK 1 freq.txt'), os.path.join('data', 'lists', 'HSK1List.json'), 'HSK 1')
-make_hsk_list(os.path.join('data', 'src', 'HSK 2 freq.txt'), os.path.join('data', 'lists', 'HSK2List.json'), 'HSK 2')
-make_hsk_list(os.path.join('data', 'src', 'HSK 3 freq.txt'), os.path.join('data', 'lists', 'HSK3List.json'), 'HSK 3')
-make_hsk_list(os.path.join('data', 'src', 'HSK 4 freq.txt'), os.path.join('data', 'lists', 'HSK4List.json'), 'HSK 4')
-make_hsk_list(os.path.join('data', 'src', 'HSK 5 freq.txt'), os.path.join('data', 'lists', 'HSK5List.json'), 'HSK 5')
-make_hsk_list(os.path.join('data', 'src', 'HSK 6 freq.txt'), os.path.join('data', 'lists', 'HSK6List.json'), 'HSK 6')
+make_hsk_list().write(os.path.join('data', 'lists', 'hskList.json'))
 
 
 # Store data as a variable in a JS file (to avoid CORS issues in Chrome)

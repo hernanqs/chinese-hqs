@@ -1,4 +1,4 @@
-const staticCacheName = 'static-cache-v2.0.3';
+const staticCacheName = 'static-cache-v2.1.0';
 const dynamicCacheName = 'dynamic-cache';
 const dynamicCacheLimit = 20;
 
@@ -28,13 +28,7 @@ const staticCacheAssests = [
 	'indices/cedictEnglishIndex.js',
 	'indices/radicalIndex.js',
 	'indices/HSKLevelIndex.js',
-	'lists/HSK1List.js',
-	'lists/HSK2List.js',
-	'lists/HSK3List.js',
-	'lists/HSK4List.js',
-	'lists/HSK5List.js',
-	'lists/HSK6List.js',
-
+	'lists/hskList.js',
 ];
 
 // Cache static cache

@@ -12,8 +12,10 @@ __exports_list__ = [
 	('../indices/cedictPinyinWODIndex.js', 'cedictPinyinWODIndex'),
 	('../indices/cedictWordIndex.js', 'cedictWordIndex'),
 
-	('../js/data-api.js', ['HanziDataAPI', 'CedictDataAPI']),
-	('../js/gui-api.js', ['HanziGuiAPI', 'CedictGuiAPI']),
+	('../lists/hskList.js', 'hskList'),
+
+	('../js/data-api.js', 'HanziDataAPI, CedictDataAPI, ListDataAPI'),
+	('../js/gui-api.js', 'HanziGuiAPI, CedictGuiAPI'),
 
 ]
 
@@ -43,17 +45,9 @@ def toggle_exports_in_files(exports_list, operation=None):
 	# Add/remove the export for each file
 	for file_path, export_name in exports_list:
 		if add:
-			# If there is more than one export for the file
-			# add them all
-			if type(export_name) == list:
-				toggle_exports_in_files(
-					[(file_path, name) for name in export_name],
-					'add'
-				)
-			else:
-				add_exports(file_path, export_name)
+			add_exports(file_path, export_name)
 		else:
-				remove_exports(file_path)
+			remove_exports(file_path)
 
 if __name__ == '__main__':
 		toggle_exports_in_files(__exports_list__)
