@@ -18,28 +18,6 @@ var hskLevelLink = new Link('#type=hsk&value=');
 var listLink = new Link('#type=list&value=');
 var cedictEntryLink = new Link('#type=cedict-entry&value=');
 
-// Takes a character in a string.
-// Returns true if the character is a hanzi, else returns false.
-function isHanzi(char) {
-	return !/[a-zA-Z0-9\s,，.:·]/.test(char);
-}
-
-// Takes a string with a chinese word (or phrase)
-// Returns a string with all hanzi characters converted in links (anchor HTML elements) to
-// the search results page for that hanzi
-function getHanziLinksFromWord(word) {
-	let result = '';
-	for (let char of word) {
-		// If character is a hanzi add link to search results page for that
-		// hanzi, else add character
-		if (isHanzi(char)) {
-			result += hanziLink.get(char);
-		} else {
-			result += char;
-		}
-	}
-	return result;
-}
 
 // Superclass for the API used to get the HTML strings used to display the data
 // to the user.
@@ -120,6 +98,29 @@ class DataGuiAPI {
             ).join('');
     }
 
+	// Takes a character in a string.
+	// Returns true if the character is a hanzi, else returns false.
+	isHanzi(char) {
+		return !/[a-zA-Z0-9\s,，.:·]/.test(char);
+	}
+
+	// Takes a string with a chinese word (or phrase)
+	// Returns a string with all hanzi characters converted in links (anchor HTML elements) to
+	// the search results page for that hanzi
+	getHanziLinksFromWord(word) {
+		let result = '';
+		for (let char of word) {
+			// If character is a hanzi add link to search results page for that
+			// hanzi, else add character
+			if (this.isHanzi(char)) {
+				result += hanziLink.get(char);
+			} else {
+				result += char;
+			}
+		}
+		return result;
+	}
+
 }
 
 
@@ -152,7 +153,7 @@ class HanziGuiAPI extends DataGuiAPI {
             hanziLink.get(hanzi['simplified']),
             Array.isArray(hanzi['traditional'])? hanzi['traditional'].map(h =>wiktionaryLink.get(h)) : '--',
             hanzi['pinyin'],
-            hanzi['otherPinyin'],
+            Array.isArray(hanzi['otherPinyin'])? hanzi['otherPinyin'] : '--',
             hanzi['mostCommonRanking'],
             hanzi['HSKLevel'],
             radicalLink.get(hanzi['radical']) + hanzi['radicalAndExtraStrokes'].slice(1),
@@ -272,7 +273,7 @@ class CedictGuiAPI extends DataGuiAPI {
             wiktionaryLink.get(simp, 'w') + ' ' +
             searchLink.get(simp + '&search-lang=Ch', 's') + ' ' +
             cedictEntryLink.get(simp, '→'),
-            getHanziLinksFromWord(simp),
+            this.getHanziLinksFromWord(simp),
             cedictDefinition['t'],
             cedictDefinition['p'],
             cedictDefinition['e']
@@ -344,6 +345,116 @@ class CedictGuiAPI extends DataGuiAPI {
         return cedictWordCard;
     }
 
+
+}
+
+
+// Class for the API used to get the HTML strings used to display the data
+// from the lists to the user.
+class ListGuiAPI extends DataGuiAPI {
+	constructor(list) {
+		super();
+		this.list = list;
+		this.name = `${list.metadata.id}-table`;
+		this.colNames = [''].concat(list.metadata.fieldNames);
+	}
+
+	// Takes a list entry and a function.
+	// Applies the function to each field of the entry. The entry and the
+	// name, key and type of the current field are passed to the function.
+	// Returns an array with the returning value of the function for each field.
+	iterEntry(entry, func) {
+		let result = []
+		for (let i = 0; i < this.list.metadata.fieldNames.length; i++) {
+			result.push(func(
+				entry,
+				this.list.metadata.fieldNames[i],
+				this.list.metadata.fieldKeys[i],
+				this.list.metadata.fieldTypes[i],
+			));
+		}
+		return result;
+	}
+
+	// Takes a list entry of the cedict.
+	// Returns an arrays of strings to be used as the contents of the td elements
+	// in the row (tr) corresponding to the list entry passed as an argument.
+	getTdContents(entry) {
+		let simpKey = this.list.getFieldKeyFromType('simpHanzi');
+		let simp = entry[simpKey];
+		let result = [
+			wiktionaryLink.get(simp, 'w') + ' ' +
+			searchLink.get(simp + '&search-lang=Ch', 's') + ' ' +
+			cedictEntryLink.get(simp, '→'),
+		];
+
+		result = result.concat(
+			this.iterEntry(entry, (entry, fieldName, fieldKey, fieldType) => {
+				return fieldType === 'simpHanzi' ?
+					this.getHanziLinksFromWord(entry[fieldKey]) :
+					entry[fieldKey];
+				}
+			)
+		);
+
+		return result;
+	}
+
+	// Takes an object with the list entry.
+	// Returns an HTML string with the information of the list entry.
+	getListEntryDefinition(entry) {
+		let definition = '<dl class="list-entry-data-dl">';
+		definition += this.iterEntry(entry, (entry, fieldName, fieldKey, fieldType) => {
+			if (fieldType !== 'simpHanzi') {
+				return `<dt class="list-entry-data-dt">
+					${ fieldName }
+				</dt>
+				<dd class="list-entry-data-dd" ${ fieldType === 'tradHanzi' ? 'id="list-entry-data-trad"' : '' }>
+					${
+						entry[fieldKey] || '--'
+					}
+				</dd>`
+			}
+			else {
+				return '';
+			}
+		}).join('');
+		definition += '</dl>'
+
+		return definition;
+	}
+
+	// Takes an array with one or more list entries for one chinese word
+	// (or phrase).
+	// Returns an HTML string with the card component to display the information
+	// about the word (or phrase) present in the list.
+	getCard(entries) {
+		let entryDataContent = '';
+
+		for (let entry of entries) {
+			entryDataContent += `<div class="list-entry-definition">${
+				this.getListEntryDefinition(entry)
+			}</div>`;
+		}
+
+		let simplified = entries[0][this.list.getFieldKeyFromType('simpHanzi')];
+
+		let listEntryCard = `
+			<section class="list-entry-card">
+				<div class="list-entry-card-simp-div">
+					<p class="list-entry-card-simp" id="list-entry-card-simp">${ simplified }</p>
+					${ wiktionaryLink.get(simplified, 'Wiktionary') }
+				</div>
+				<div class="list-entry-data">
+					${ entryDataContent }
+				</div>
+				<div class="stroke-order-div" id="stroke-order-div">
+				</div>
+			</section>
+		`;
+
+		return listEntryCard;
+	}
 
 }
 

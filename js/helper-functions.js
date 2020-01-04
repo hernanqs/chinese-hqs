@@ -32,3 +32,9 @@ It may be because your browser does not support some of the latest web technolog
 Please try using an updated version of Firefox or Chrome.`
 	);
 }
+
+// Takes a character in a string.
+// Returns true if the character is a hanzi, else returns false.
+function isHanzi(char) {
+	return !/[a-zA-Z0-9\s,，.:·]/.test(char);
+}
