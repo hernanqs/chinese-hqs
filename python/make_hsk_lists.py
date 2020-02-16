@@ -3,6 +3,15 @@
 import csv, os
 from list_class import List
 
+fieldNames = [
+	'Simplified',
+	'Traditional',
+	'Pinyin',
+	'Meaning'
+]
+fieldKeys = ['s', 't', 'p', 'e']
+fieldTypes = ['simpHanzi', 'tradHanzi', 'pinyin', 'english']
+
 def get_sublist(infile_path, list_metadata, list_col_to_field_map):
 	print('Creating', list_metadata['id'], 'list...')
 
@@ -34,14 +43,9 @@ def get_hsk_sublist(hsk_level):
 				'id': f'hsk-{hsk_level}',
 				'name': f'HSK {hsk_level}',
 				'hasOwnData': True,
-				'fieldNames': [
-					'Simplified',
-					'Traditional',
-					'Pinyin',
-					'Meaning'
-				],
-				'fieldKeys': ['s', 't', 'p', 'e'],
-				'fieldTypes': ['simpHanzi', 'tradHanzi', 'pinyin', 'english']
+				'fieldNames': fieldNames,
+				'fieldKeys': fieldKeys,
+				'fieldTypes': fieldTypes
 
 			},
 			list_col_to_field_map
@@ -52,7 +56,10 @@ def make_hsk_list():
 		'id': 'hsk',
 		'name': 'HSK',
 		'hasOwnData': True,
-		'hasSublists': True
+		'hasSublists': True,
+		'fieldNames': fieldNames,
+		'fieldKeys': fieldKeys,
+		'fieldTypes': fieldTypes
 		},
 		[
 			get_hsk_sublist(1),

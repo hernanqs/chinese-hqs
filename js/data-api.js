@@ -298,7 +298,8 @@ class ListDataAPI extends DataAPI {
 		'ī': 'i', 'í': 'i', 'ǐ': 'i', 'ì': 'i',
 		'ō': 'o', 'ó': 'o', 'ǒ': 'o', 'ò': 'o',
 		'ū': 'u', 'ú': 'u', 'ǔ': 'u', 'ù': 'u',
-		'ǖ': 'u', 'ǘ': 'u', 'ǚ': 'u', 'ǜ': 'u'
+		'ǖ': 'u', 'ǘ': 'u', 'ǚ': 'u', 'ǜ': 'u',
+		'ü': 'u'
 	};
 
 	// Takes a string with pinyin in it.
@@ -332,20 +333,35 @@ class ListDataAPI extends DataAPI {
 				results.push(entry);
 			}
 		}
+		// console.log(results);
 		return results;
-	}
+		}
 
 	// Takes a pinyin or hanzi word in a string and searches if it matches
 	// one or more entries in the data.
 	// Returns the matched data entries in an array.
 	searchChinese(searchText) {
+		searchText = searchText.replace(' ', '');
+		let pinyinCharsRE = /[0-9a-zA-Zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]/i;
+		// let pinyinCharsRE = new RegExp(`[${pinyinChars}]`,'i');
+		let charsWithDiacriticsRE = /[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]/i;
+		// let re = new RegExp(`(^|[^${pinyinChars}])${searchText}([^${pinyinChars}]|$)`,'gi');
+
 		let results = [];
+		// console.log(searchText, charWithDiacritics.test(searchText));
 
 		results = results.concat(this.searchField(searchText, 'simpHanzi'));
-		if (results.length == 0) {
+		if (results.length == 0 && pinyinCharsRE.test(searchText)) {
+			// console.log(this.searchField(searchText, 'pinyin'),
+			// 	(searchText, field) => re.test(field)
+			// 	);
+			// results = results.concat(this.searchField(searchText, 'pinyin',
+			// 	(searchText, field) => re.test(field)
+			// ));
 			results = results.concat(this.searchField(searchText, 'pinyin'));
+			// console.log(results);
 		}
-		if (results.length == 0) {
+		if (results.length == 0 && !charsWithDiacriticsRE.test(searchText)) {
 			results = results.concat(this.searchField(searchText, 'pinyin',
 				(searchText, field) => {
 					return this.removePinyinDiacritics(field).toLowerCase()
@@ -447,6 +463,124 @@ class ListDataAPI extends DataAPI {
 	// Method used to sort entries according to their original order in the list.
 	sortFunction(a, b) {
 		return this.getEntryPosition(a) - this.getEntryPosition(b);
+	}
+
+	// Returns the number of entries of the sublist
+	getLength(entry) {
+		return this.content.length;
+	}
+
+}
+
+
+class SuperlistDataAPI extends ListDataAPI {
+	constructor(list) {
+		super(list);
+		this.content = list.content.map(
+			sublist => new ListDataAPI(sublist)
+		)
+	}
+
+	// Takes a function.
+	// Applies the function to every sublist and returns an
+	// array with the results.
+	mapSublists(func) {
+		return this.content.map(func);
+	}
+
+	// Takes a function that returns an array.
+	// Applies the function to every sublist, concatenates
+	// the results and returns the resulting array.
+	iterSublists(func) {
+		return this
+			.mapSublists(func)
+			.reduce(
+				(acc, curr) => acc.concat(curr)
+			);
+	}
+
+	// Takes a string representing a key in the data.
+	// Returns true if the data has entries for that key,
+	// false if not.
+	has(key) {
+		return this.mapSublists(
+			sublist => sublist.has(key)
+		).some(
+			el => el === true
+		);
+	}
+
+	// Takes a string to be used as a key to access one or more data entries.
+	// Returns the matched data entries in an array. If no data entry matches
+	// returs an array with an entry filled with default empty values.
+	getEntriesFromOneKey(key) {
+		let results = this.iterSublists(
+			// Checking .has() avoids getting filled empty entries if sublists
+			// does not have the entry
+			sublist => sublist.has(key) ? sublist.getEntriesFromOneKey(key) : []
+		);
+		return results.length > 0 ? results : [this.getFilledEmptyEntry(key)];
+	}
+
+	// Takes a pinyin or hanzi word in a string and searches if it matches
+	// one or more entries in the data.
+	// Returns the matched data entries in an array.
+	searchChinese(searchText) {
+		return this.iterSublists(
+			sublist => sublist.searchChinese(searchText)
+		);
+	}
+
+	// Takes an English word (or words) in a string and searches if it matches
+	// one or more entries in the data.
+	// Returns the matched data entries in an array.
+	searchEnglish(searchText) {
+		return this.iterSublists(
+			sublist => sublist.searchEnglish(searchText)
+		);
+	}
+
+	// Returns the keys (the simplified hanzi) of all
+	// the entries of the lists.
+	getAllKeys() {
+		return this.iterSublists(
+			sublist => sublist.getKeysFromEntries(sublist.content)
+		);
+	}
+
+	// Returns an array with the names of the sublists
+	// in the superlist
+	getSublistsNames() {
+		return this.mapSublists(
+			sublist => sublist.metadata.name
+		);
+	}
+
+	// Returns an array with the ids of the sublists
+	// in the superlist
+	getSublistsIds() {
+		return this.mapSublists(
+			sublist => sublist.metadata.id
+		);
+	}
+
+	// Returns the total number of entries in the
+	// superlist (the sum of the number of entries
+	// in each sublist)
+	getLength(entry) {
+		return this.mapSublists(
+			sublist => sublist.getLength()
+		).reduce(
+			(acc, curr) => acc + curr
+		);
+	}
+
+	// Returns an array with the number of entries of
+	// each sublist in the superlist
+	getSublistsLengths() {
+		return this.mapSublists(
+			sublist => sublist.getLength()
+		);
 	}
 
 }

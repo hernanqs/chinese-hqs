@@ -14,7 +14,7 @@ __exports_list__ = [
 
 	('../lists/hskList.js', 'hskList'),
 
-	('../js/data-api.js', 'HanziDataAPI, CedictDataAPI, ListDataAPI'),
+	('../js/data-api.js', 'HanziDataAPI, CedictDataAPI, ListDataAPI, SuperlistDataAPI'),
 	('../js/gui-api.js', 'HanziGuiAPI, CedictGuiAPI, ListGuiAPI'),
 
 ]

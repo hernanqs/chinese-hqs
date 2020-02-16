@@ -15,7 +15,7 @@ var { cedictWordIndex } = require('../indices/cedictWordIndex.js');
 
 var { hskList } = require('../lists/hskList.js');
 
-var { HanziDataAPI, CedictDataAPI, ListDataAPI } = require('../js/data-api.js');
+var { HanziDataAPI, CedictDataAPI, ListDataAPI, SuperlistDataAPI } = require('../js/data-api.js');
 
 
 describe('#Data API', function () {
@@ -27,7 +27,7 @@ describe('#Data API', function () {
 		});
 
 		describe('#has()', function () {
-			it('Returns true if the passed hanzi exist in the data', function () {
+			it('Returns true if the passed hanzi exists in the data', function () {
 				expect(this.hanziData.has('你')).to.be.true;
 			});
 			it('Returns false if the passed hanzi does not exist in the data', function () {
@@ -88,15 +88,15 @@ describe('#Data API', function () {
 				});
 			});
 			it('Returns the rigth entries when a pinyin is passed', function () {
-				expect(this.hanziData.searchChinese('ta')[0]).to.deep.equal({                                        
-					simplified: '他',                       
-					mostCommonRanking: 10,                 
-					strokeNumber: 5,                       
-					radical: '人',                          
-					radicalAndExtraStrokes: '人亻 + 3',      
-					pinyin: 'tā',                          
+				expect(this.hanziData.searchChinese('ta')[0]).to.deep.equal({
+					simplified: '他',
+					mostCommonRanking: 10,
+					strokeNumber: 5,
+					radical: '人',
+					radicalAndExtraStrokes: '人亻 + 3',
+					pinyin: 'tā',
 					meaning: 'other, another; he, she, it',
-					HSKLevel: 1                            
+					HSKLevel: 1
 				});
 			});
 			it('Returns the entries ordered from most to least common', function () {
@@ -121,7 +121,7 @@ describe('#Data API', function () {
 				expect(this.hanziData.searchEnglish('42')).to.be.an('array').with.lengthOf(0);
 			});
 			it('Returns the rigth entries when an english word is passed', function () {
-				expect(this.hanziData.searchEnglish('I')[0]).to.deep.equal({                                   
+				expect(this.hanziData.searchEnglish('I')[0]).to.deep.equal({
 					simplified: '我',
 					mostCommonRanking: 9,
 					strokeNumber: 7,
@@ -133,7 +133,7 @@ describe('#Data API', function () {
 				});
 			});
 			it('Returns the intersection of the entries for all words when more than one english word is passed', function () {
-				expect(this.hanziData.searchEnglish('I brother')).to.deep.include({                                         
+				expect(this.hanziData.searchEnglish('I brother')).to.deep.include({
 					simplified: '弟',
 					mostCommonRanking: 816,
 					strokeNumber: 7,
@@ -177,7 +177,7 @@ describe('#Data API', function () {
 		});
 
 		describe('#has()', function () {
-			it('Returns true if the passed word exist in the data', function () {
+			it('Returns true if the passed word exists in the data', function () {
 				expect(this.cedictData.has('木兰')).to.be.true;
 			});
 			it('Returns false if the passed word does not exist in the data', function () {
@@ -295,7 +295,7 @@ describe('#Data API', function () {
 		});
 
 		describe('#has()', function () {
-			it('Returns true if the passed word exist in the data', function () {
+			it('Returns true if the passed word exists in the data', function () {
 				expect(this.listData.has('的')).to.be.true;
 			});
 			it('Returns false if the passed word does not exist in the data', function () {
@@ -347,8 +347,19 @@ describe('#Data API', function () {
 				);
 			});
 			it('Returns the exact entry when a pinyin with diacritics is passed', function () {
+				let results = this.listData.searchChinese('zěn me');
 				expect(this.listData.searchChinese('zěn me')[0]).to.deep.equal(
 					{ s: '怎么', t: '怎麼', p: 'zěnme', e: 'how?' }
+				);
+			});
+			it('Does not return entries without diacritics when a pinyin with diacritics is passed', function () {
+				expect(this.listData.searchChinese('dé')).to.not.deep.include(
+						{
+							s: '的',
+							t: '的',
+							p: 'de',
+							e: "indicates possession, like adding 's to a noun"
+						}
 				);
 			});
 			it('Returns the entries that contain the passed pinyin', function () {
@@ -361,6 +372,7 @@ describe('#Data API', function () {
 				expect(results).to.have.lengthOf.at.least(2);
 				let isOrdered = true;
 				for (let i = 1; i < results.length; i++) {
+					expect(this.listData.getEntryPosition(results[i])).to.be.at.least(0);
 					if (this.listData.getEntryPosition(results[i]) < this.listData.getEntryPosition(results[i-1])) {
 						isOrdered = false;
 					}
@@ -428,5 +440,221 @@ describe('#Data API', function () {
 			});
 		});
 
+		describe('#getLength()', function () {
+			it('Returns the length of the list', function () {
+				expect(this.listData.getLength()).to.equal(150);
+			});
+		});
+
 	});
+
+
+	describe('#Superlist API', function () {
+
+		before(function () {
+			this.superlistData = new SuperlistDataAPI(hskList);
+		});
+	
+		describe('#constructor()', function () {
+			it('Makes every sublist an instance of the List Data API', function () {
+				this.superlistData.content.forEach(
+					el => expect(el).to.be.an.instanceOf(ListDataAPI)
+				)
+			});
+		});
+	
+		describe('#getFieldKeyFromType()', function () {
+			it('Returns the right field key for the passed field type', function () {
+				expect(this.superlistData.getFieldKeyFromType('simpHanzi')).to.equal('s');
+				expect(this.superlistData.getFieldKeyFromType('english')).to.equal('e');
+			});
+		});
+	
+		describe('#has()', function () {
+			it('Returns true if the passed word exists in the data', function () {
+				expect(this.superlistData.has('的')).to.be.true;
+			});
+			it('Returns false if the passed word does not exist in the data', function () {
+				expect(this.superlistData.has('42')).to.be.false;
+			});
+		});
+	
+		describe('#getEntriesFromOneKey()', function () {
+			it('Returns the entries for the requested key', function () {
+				expect(this.superlistData.getEntriesFromOneKey('是')[0]).to.deep.equal(
+					{ s: '是', t: '是', p: 'shì', e: 'be; is; are; am' }
+				);
+			});
+			it('Returns array with entry filled with default values if the requested key is not in the data', function () {
+				let result = this.superlistData.getEntriesFromOneKey('42');
+				expect(result).to.have.lengthOf(1);
+				expect(result[0]).to.deep.equal(
+					{ s: '42', t: '--', p: '--', e: '--' }
+				);
+			});
+		});
+	
+		describe('#searchChinese()', function () {
+			it('Returns an array', function () {
+				expect(this.superlistData.searchChinese('的')).to.be.an('array');
+			});
+			it('Returns an empty array if there is no search results', function () {
+				expect(this.superlistData.searchChinese('42')).to.be.an('array').with.lengthOf(0);
+			});
+			it('Returns entries from all sublists when a word in hanzi is passed', function () {
+				let results = this.superlistData.searchChinese('是');
+				expect(results).to.deep.include(
+					{ s: '是', t: '是', p: 'shì', e: 'be; is; are; am' }
+				).and.to.deep.include(
+					{ s: '可是', t: '可是', p: 'kěshì', e: 'but; however' }
+				);
+			});
+			it('Returns entries from all sublists when a pinyin without diacritics is passed', function () {
+				let results = this.superlistData.searchChinese('wo');
+				expect(results).to.deep.include(
+					{ s: '我们', t: '我們', p: 'wǒmen', e: 'we; us' }
+				).and.to.deep.include(
+					{ s: '卧室', t: '臥室', p: 'wòshì', e: 'bedroom' }
+				);
+			});
+			it('Returns entries from all sublists when a pinyin with diacritics is passed', function () {
+				expect(this.superlistData.searchChinese('dé')).to.deep.include(
+					{
+						s: '得',
+						t: '得',
+						p: 'dé, děi, de',
+						e: 'obtain | must | (complement particle)'
+					}
+				).and.to.deep.include(
+					{
+						s: '得天独厚',
+						t: '得天獨厚',
+						p: 'détiāndúhòu',
+						e: 'enjoy exceptional advantages; richly endowed by nature'
+					}
+				);
+			});
+			it('Does not return entries without diacritics when a pinyin with diacritics is passed', function () {
+				expect(this.superlistData.searchChinese('lè')).to.deep.include(
+					{ s: '快乐', t: '快樂', p: 'kuàilè', e: 'happy' }
+				).and.to.not.deep.include(
+					{
+						s: '了',
+						t: '了',
+						p: 'le',
+						e: 'indicates a completed or finished action'
+					}
+				);
+			});
+			it('Returns the entries ordered by the list they belong to', function () {
+				let results = this.superlistData.searchChinese('de');
+				let simpKey = this.superlistData.getFieldKeyFromType('simpHanzi');
+	
+				expect(
+					results.findIndex((entry) => entry[simpKey] === '的')
+				).to.be.below(
+					results.findIndex((entry) => entry[simpKey] === '地')
+				);
+	
+				expect(
+					results.findIndex((entry) => entry[simpKey] === '地')
+				).to.be.below(
+					results.findIndex((entry) => entry[simpKey] === '值得')
+				);
+				
+				expect(
+					results.findIndex((entry) => entry[simpKey] === '值得')
+				).to.be.below(
+					results.findIndex((entry) => entry[simpKey] === '似的')
+				);
+			});
+		});
+	
+		describe('#searchEnglish()', function () {
+			it('Returns an array', function () {
+				expect(this.superlistData.searchEnglish('Hi')).to.be.an('array');
+			});
+			it('Returns an empty array if there is no search results', function () {
+				expect(this.superlistData.searchEnglish('42')).to.be.an('array').with.lengthOf(0);
+			});
+			it('Returns entries from all sublists when an English word is searched', function () {
+				let results = this.superlistData.searchEnglish('be');
+				expect(results).to.deep.include(
+					{ s: '是', t: '是', p: 'shì', e: 'be; is; are; am' }
+				).and.to.deep.include(
+					{ s: '知道', t: '知道', p: 'zhīdao', e: 'know; be aware of' }
+				);
+			});
+			it('Returns the entries ordered by the list they belong to', function () {
+				let results = this.superlistData.searchEnglish('be');
+				let simpKey = this.superlistData.getFieldKeyFromType('simpHanzi');
+	
+				expect(
+					results.findIndex((entry) => entry[simpKey] === '是')
+				).to.be.below(
+					results.findIndex((entry) => entry[simpKey] === '知道')
+				);
+	
+				expect(
+					results.findIndex((entry) => entry[simpKey] === '知道')
+				).to.be.below(
+					results.findIndex((entry) => entry[simpKey] === '像')
+				);
+				
+				expect(
+					results.findIndex((entry) => entry[simpKey] === '像')
+				).to.be.below(
+					results.findIndex((entry) => entry[simpKey] === '行')
+				);
+			});
+	
+		});
+	
+		describe('#getAllKeys()', function () {
+			it('Returns an array of keys (simplified hanzi)', function () {
+				expect(this.superlistData.getAllKeys()).to.include(
+					'有'
+				).and.to.not.deep.include(
+					{ s: '有', t: '有', p: 'yǒu', e: 'have' }
+				);
+			});
+			it('Returns an array with all keys', function () {
+				expect(this.superlistData.getAllKeys()).to.have.lengthOf(5001);
+			});
+		});
+	
+		describe('#getSublistsNames()', function () {
+			it('Returns an array with the names of the sublists', function () {
+				expect(this.superlistData.getSublistsNames())
+					.to.have.lengthOf(6)
+					.and.to.include('HSK 1')
+					.and.to.include('HSK 6');
+			});
+		});
+	
+		describe('#getSublistsIds()', function () {
+			it('Returns an array with the ids of the sublists', function () {
+				expect(this.superlistData.getSublistsIds())
+					.to.have.lengthOf(6)
+					.and.to.include('hsk-1')
+					.and.to.include('hsk-6');
+			});
+		});
+	
+		describe('#getLength()', function () {
+			it('Returns the length of the list', function () {
+				expect(this.superlistData.getLength()).to.equal(5001);
+			});
+		});
+	
+		describe('#getSublistsLength()', function () {
+			it('Returns an array with the lengths of the sublists', function () {
+				expect(this.superlistData.getSublistsLengths())
+					.to.have.lengthOf(6)
+					.and.to.include(150)
+					.and.to.include(2500);
+			});
+		});
+	});
+
 });
